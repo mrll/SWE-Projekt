@@ -1,5 +1,5 @@
 //
-// Created by Matthias Röll on 09.05.15.
+// Created by Matthias Röll, Marc Wüst on 09.05.15.
 //
 
 #ifndef SWE_PROJEKT_LASER_H
