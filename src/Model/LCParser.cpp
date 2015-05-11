@@ -2,12 +2,13 @@
 // Created by Matthias Röll, Marc Wüst on 09.05.15.
 //
 
+#include <iostream>
 #include "LCParser.h"
 
 #pragma mark RegEx
 /* ---------------------------------------------------------------------------------------------------------------- */
 
-const QRegExp * LCParser::moveExp      = new QRegExp("^\\s?(MOVE)\\s+(\\d){1,4}\\s*,(\\s)*(\\d){1,4}(?:\\s*\\#+.*|\\s*)$",
+const QRegExp * LCParser::moveExp      = new QRegExp("^\\s?(MOVE)\\s+(\\d{1,4})\\s*,\\s*(\\d{1,4})(?:\\s*\\#+.*|\\s*)$",
                                                      Qt::CaseSensitive,
                                                      QRegExp::RegExp);
 const QRegExp * LCParser::powerExp     = new QRegExp("^\\s?(LASER)\\s+(ON|OFF)(?:\\s*\\#+.*|\\s*)$",
@@ -127,11 +128,16 @@ bool LCParser::moveExpValidator(QString string, LCParserCommand * command) {
     if (command != NULL && command->parameterCount >= 2) {
         if (LCParser::moveExp->exactMatch(string.toUpper())) {
             QStringList list = LCParser::moveExp->capturedTexts();
+            bool ok;
 
             // Liste enthält [0] ganzen string, [1] MOVE, [2] parameter 1, [3] parameter 2
             command->command        = LCMoveCommand;
-            command->parameter[0]   = list[2].toInt();
-            command->parameter[1]   = list[3].toInt();
+            command->parameter[0]   = list.at(2).toInt(&ok, 10);
+            command->parameter[1]   = list.at(3).toInt(&ok, 10);
+
+            for (int i = 0; i < list.count(); ++i) {
+                std::cout << list.at(i).toStdString() << std::endl;
+            }
 
             return true;
         }
@@ -150,7 +156,11 @@ bool LCParser::powerExpValidator(QString string, LCParserCommand * command) {
 
             // Liste enthält [0] ganzen string, [1] LASER, [2] parameter 1
             command->command        = LCPowerCommand;
-            command->parameter[0]   = list[2].toInt();
+            if (list.at(2).contains("ON", Qt::CaseSensitive)) {
+                command->parameter[0] = 1;
+            } else {
+                command->parameter[0] = 0;
+            }
 
             return true;
         }

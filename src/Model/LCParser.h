@@ -11,8 +11,6 @@
 #include <QtCore/QRegExp>
 #include <QtCore/QMap>
 
-//#include "LCState.h"
-
 #pragma mark Enums
 /* ---------------------------------------------------------------------------------------------------------------- */
 
@@ -150,14 +148,14 @@ private:
 /* ---------------------------------------------------------------------------------------------------------------- */
 
 /*
- * MOVE Expression - ^\s?(MOVE)\s+(\d){1,4}\s*,(\s)*(\d){1,4}(?:\s*\#+.*|\s*)$
+ * MOVE Expression - ^\s?(MOVE)\s+(\d{1,4})\s*,\s*(\d{1,4})(?:\s*\#+.*|\s*)$
  *
  * ^\s?                     - Anfang der Zeile mit optionalen Leerzeichen
  * (MOVE)                   - Gruppe 1: MOVE
  * \s+                      - Mindstens 1 Leerzeichen
- * (\d){1,4}                - Gruppe 2: Zahl zwischen 0 und 9999
+ * (\d{1,4})                - Gruppe 2: Zahl zwischen 0 und 9999
  * \s*,\s*                  - Trennung durch Komma mit optionalen Leerzeichen
- * (\d){1,4}                - Gruppe 3: Zahl zwischen 0 und 9999
+ * (\d{1,4})                - Gruppe 3: Zahl zwischen 0 und 9999
  * (?:\s*\#+.*|\s*)         - Entweder ein Kommentarstring (# + Irgendwas) oder Leerzeichen (optional)
  * $                        - Ende der Zeile
  */
