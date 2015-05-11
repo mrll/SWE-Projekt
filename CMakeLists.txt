@@ -10,7 +10,7 @@ set(SOURCE_FILES    src/main.cpp
                     #src/Model/LCState.cpp src/Model/LCState.h
                     #src/Model/LCLaser.cpp src/Model/LCLaser.h
                     src/Model/LCParser.cpp src/Model/LCParser.h
-                    #src/Model/LCCoordinate.cpp src/Model/LCCoordinate.h
+                    src/Model/LCCoordinate.cpp src/Model/LCCoordinate.h
                     #src/View/LCUserInterface.cpp src/View/LCUserInterface.h
                     #src/View/LCUI_Base.h
                     #src/Controller/LCController.cpp src/Controller/LCController.h
