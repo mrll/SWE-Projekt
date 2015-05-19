@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include "Model/LCParser.h"
+#include "View/LCUserInterface.h"
 
 int main(int argc, char *argv[]) {
     QString code;
@@ -49,12 +50,18 @@ int main(int argc, char *argv[]) {
 
     bool success = parser->parse(code, commands, errors);
 
-    std::cout << "Found " << commands->count() << " commands and " << errors->count() << " errors" << std::endl;
+    std::cout << "Found " << commands->count() << " commands and " << errors->count() << " errors" << std::endl << std::endl;
 
     for (int i = 0; i < errors->count(); i++) {
-        std::cout << "Error in Line: " << errors->at(i).line << std::endl;
+        std::cout << "Error in Line: " << errors->at(i).line << " Type: " << errors->at(i).code << std::endl;
         std::cout << "String: " << errors->at(i).string.toStdString() << std::endl;
+        std::cout << "Message: " << errors->at(i).error.toStdString() << std::endl << std::endl;
     }
 
     return success;
+
+    QApplication a(argc, argv);
+    LCUserInterface userInterface;
+    userInterface.show();
+    return a.exec();
 }

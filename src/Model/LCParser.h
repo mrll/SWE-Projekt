@@ -19,9 +19,9 @@
  */
 typedef enum {
     LCErrNone = 0,              /**< Kein Fehler (Platzhalter bei Initialisierung)  */
-    LCErrSyntax = 1,            /**< Syntaxfehler                                   */
-    LCErrParamaterType = 2,     /**< Falscher Parametertyp                          */
-    LCErrParameterCount = 3     /**< Falsche Parameteranzahl                        */
+    LCErrSyntax = 1,            /**< Syntaxfehler (Allgemein)                       */
+    LCErrMoveSyntax = 2,        /**< Syntaxfehler (Move)                            */
+    LCErrPowerSyntax = 3        /**< Syntaxfehler (Power)                           */
 } LCErrorCode;
 
 /**
@@ -42,10 +42,11 @@ typedef enum {
 class LCParserError {
 
 public:
-    LCParserError(QString string, int line, LCErrorCode code);
+    LCParserError(QString string, QString error, int line, LCErrorCode code);
     LCParserError();
 
-    QString string;         /**< Fehlerstring   */
+    QString string;         /**< Codestring     */
+    QString error;          /**< Fehlermeldung  */
     int line;               /**< Zeile          */
     LCErrorCode code;       /**< Fehlercode     */
 };

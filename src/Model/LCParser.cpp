@@ -25,13 +25,15 @@ const QRegExp * LCParser::commentExp   = new QRegExp("\\s?\\#+.*$",
 /* Konstruktoren        */
 /* ==================== */
 
-LCParserError::LCParserError(QString string, int line, LCErrorCode code) {
+LCParserError::LCParserError(QString string, QString error, int line, LCErrorCode code) {
     this->string = string;
+    this->error = error;
     this->line = line;
     this->code = code;
 }
 LCParserError::LCParserError() {
     this->string = "";
+    this->error = "";
     this->line = -1;
     this->code = LCErrNone;
 }
@@ -116,8 +118,29 @@ bool LCParser::parse(QString code, QVector<LCParserCommand> * commands, QVector<
 /* ==================== */
 
 LCParserError LCParser::findLineError(QString string, int line) {
-    // TODO: Fehlererkennung implementieren
-    return LCParserError(string, line, LCErrNone);
+    QString error;
+    LCErrorCode code;
+
+    int moveMatch, powerMatch;
+
+    moveMatch = LCParser::moveExp->matchedLength();
+    powerMatch = LCParser::powerExp->matchedLength();
+
+    // Testen welche RegEx am besten gepasst hat und Fehlernachricht schreiben.
+    // Die Kommentar RegEx wird hier ausgelassen, da die matchedLength bei einem Fehler immer 0 ist.
+    // Sollte weder der MOVE noch der LASER Befehl zuteffen wird ein Unbekannter Fehler gemeldet.
+    if (moveMatch > powerMatch) {
+        code = LCErrMoveSyntax;
+        error = "MOVE Syntax Error at character " + QString::number(moveMatch + 1); // +1 wegen Basis 0
+    } else if (powerMatch > 0) {
+        code = LCErrPowerSyntax;
+        error = "LASER Syntax Error at character " + QString::number(powerMatch + 1);
+    } else {
+        code = LCErrSyntax;
+        error = "Unknown Syntax Error";
+    }
+
+    return LCParserError(string, error, line, code);
 }
 
 /* ==================== */
@@ -134,10 +157,6 @@ bool LCParser::moveExpValidator(QString string, LCParserCommand * command) {
             command->command        = LCMoveCommand;
             command->parameter[0]   = list.at(2).toInt(&ok, 10);
             command->parameter[1]   = list.at(3).toInt(&ok, 10);
-
-            for (int i = 0; i < list.count(); ++i) {
-                std::cout << list.at(i).toStdString() << std::endl;
-            }
 
             return true;
         }
