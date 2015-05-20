@@ -149,9 +149,9 @@ private:
 /* ---------------------------------------------------------------------------------------------------------------- */
 
 /*
- * MOVE Expression - ^\s?(MOVE)\s+(\d{1,4})\s*,\s*(\d{1,4})(?:\s*\#+.*|\s*)$
+ * MOVE Expression - ^\s*(MOVE)\s+(\d{1,4})\s*,\s*(\d{1,4})(?:\s*\#+.*|\s*)$
  *
- * ^\s?                     - Anfang der Zeile mit optionalen Leerzeichen
+ * ^\s*                     - Anfang der Zeile mit optionalen Leerzeichen
  * (MOVE)                   - Gruppe 1: MOVE
  * \s+                      - Mindstens 1 Leerzeichen
  * (\d{1,4})                - Gruppe 2: Zahl zwischen 0 und 9999
@@ -162,9 +162,9 @@ private:
  */
 
 /*
- * LASER Expression - ^\s?(LASER)\s+(ON|OFF)(?:\s*\#+.*|\s*)$
+ * LASER Expression - ^\s*(LASER)\s+(ON|OFF)(?:\s*\#+.*|\s*)$
  *
- * ^\s?                     - Anfang der Zeile mit optionalen Leerzeichen
+ * ^\s*                     - Anfang der Zeile mit optionalen Leerzeichen
  * (LASER)                  - Gruppe 1: LASER
  * \s+                      - Mindstens 1 Leerzeichen
  * (ON|OFF)                 - Gruppe 2: ON oder OFF
@@ -173,11 +173,13 @@ private:
  */
 
 /*
- * COMMENT Expression - \s?\#+.*$
+ * COMMENT Expression - (\s*\#+.*$|^\s*$)
  *
- * ^\s?                     - Anfang der Zeile mit optionalen Leerzeichen
+ * ^\s*                     - Anfang der Zeile mit optionalen Leerzeichen
  * \#+.*                    - Kommentarstring (# + Irgendwas)
  * $                        - Ende der Zeile
+ *
+ * \s*$                     - (wurde hinzugenommen um bei der Fehlererkennung keine leeren Zeilen zu finden)
  */
 
 /* RegEx Tester: http://www.regexr.com */

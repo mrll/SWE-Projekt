@@ -8,13 +8,13 @@
 #pragma mark RegEx
 /* ---------------------------------------------------------------------------------------------------------------- */
 
-const QRegExp * LCParser::moveExp      = new QRegExp("^\\s?(MOVE)\\s+(\\d{1,4})\\s*,\\s*(\\d{1,4})(?:\\s*\\#+.*|\\s*)$",
+const QRegExp * LCParser::moveExp      = new QRegExp("^\\s*(MOVE)\\s+(\\d{1,4})\\s*,\\s*(\\d{1,4})(?:\\s*\\#+.*|\\s*)$",
                                                      Qt::CaseSensitive,
                                                      QRegExp::RegExp);
-const QRegExp * LCParser::powerExp     = new QRegExp("^\\s?(LASER)\\s+(ON|OFF)(?:\\s*\\#+.*|\\s*)$",
+const QRegExp * LCParser::powerExp     = new QRegExp("^\\s*(LASER)\\s+(ON|OFF)(?:\\s*\\#+.*|\\s*)$",
                                                      Qt::CaseSensitive,
                                                      QRegExp::RegExp);
-const QRegExp * LCParser::commentExp   = new QRegExp("\\s?\\#+.*$",
+const QRegExp * LCParser::commentExp   = new QRegExp("(^\\s*\\#+.*$|^\\s*$)",
                                                      Qt::CaseSensitive,
                                                      QRegExp::RegExp);
 
@@ -131,16 +131,16 @@ LCParserError LCParser::findLineError(QString string, int line) {
     // Sollte weder der MOVE noch der LASER Befehl zuteffen wird ein Unbekannter Fehler gemeldet.
     if (moveMatch > powerMatch) {
         code = LCErrMoveSyntax;
-        error = "MOVE Syntax Error at character " + QString::number(moveMatch + 1); // +1 wegen Basis 0
+        error = "MOVE Syntaxfehler ab Zeichen: " + QString::number(moveMatch + 1); // +1 wegen Basis 0
     } else if (powerMatch > 0) {
         code = LCErrPowerSyntax;
-        error = "LASER Syntax Error at character " + QString::number(powerMatch + 1);
+        error = "LASER Syntaxfehler ab Zeichen: " + QString::number(powerMatch + 1);
     } else {
         code = LCErrSyntax;
-        error = "Unknown Syntax Error";
+        error = "Syntaxfehler";
     }
 
-    return LCParserError(string, error, line, code);
+    return LCParserError(string, error, line + 1, code); // Line wird auch inkrementiert, wegen Basis 0
 }
 
 /* ==================== */

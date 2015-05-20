@@ -1,12 +1,12 @@
 # Box 1
 LASER OFF
-MOVE 100, 100   # Line Kommentar Test
+MOVE 100, 100   # Inline Kommentar Test
 LASER ON
 MOVE 150, 100
 MOVE 150, 150
 MOVE 100, 150
 MOVE 100, 100
-lAsEr off       # Case Insensitivity Test
+lAsEr ofF       # Case Insensitivity Test
 
 # Box 2
 MOVE 200, 200
@@ -23,11 +23,11 @@ LASER ON
 MOVE 250, 250
 LASER OFF
 
-# Fehler Test
+# Fehler Tests
 #
-# MVE 100, 100      # Typo                  (Syntaxfehler)              Fehlercode 1
-# MOVE 100 200      # Typo 2                (Syntaxfehler)
-# LASER 3           # Inkorrekter Befehl 1  (Falscher Parametertyp)     Fehlercode 2
-# MOVE ON, 250      # Inkorrekter Befehl 2  (Falscher Parametertyp)
-# MOVE 100.2 234.4  # Inkorrekter Befehl 3  (Falscher Parametertyp)
-# LASER ON OFF      # Inkorrekter Befehl 4  (Zu viele Parameter)        Fehlercode 3
+# MVE 100, 100
+# MOVE 100 200
+# LASER 3
+# MOVE ON, 250
+# MOVE 100.2 234.4
+# LASER ON OFF

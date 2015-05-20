@@ -39,13 +39,26 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="codeTab">
        <attribute name="title">
         <string>Steuercode</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_3">
+        <item row="1" column="2" colspan="2">
+         <widget class="QPushButton" name="openButton">
+          <property name="maximumSize">
+           <size>
+            <width>320</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Öffnen</string>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="0">
          <widget class="QLabel" name="label1">
           <property name="text">
@@ -53,124 +66,116 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="1" colspan="2">
+        <item row="0" column="2" colspan="2">
          <widget class="QLabel" name="label2">
+          <property name="maximumSize">
+           <size>
+            <width>320</width>
+            <height>16777215</height>
+           </size>
+          </property>
           <property name="text">
            <string>Datei:</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="0" rowspan="6">
-         <widget class="QPlainTextEdit" name="codeEditor">
+        <item row="2" column="2" colspan="2">
+         <widget class="QPushButton" name="saveButton">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="font">
-           <font>
-            <family>Courier</family>
-            <pointsize>15</pointsize>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
+          <property name="maximumSize">
+           <size>
+            <width>320</width>
+            <height>16777215</height>
+           </size>
           </property>
-          <property name="layoutDirection">
-           <enum>Qt::LeftToRight</enum>
-          </property>
-          <property name="lineWrapMode">
-           <enum>QPlainTextEdit::NoWrap</enum>
-          </property>
-          <property name="plainText">
-           <string>
-# Box 1
-LASER OFF
-MOVE 100, 100   # Line Kommentar Test
-LASER ON
-MOVE 150, 100
-MOVE 150, 150
-MOVE 100, 150
-MOVE 100, 100
-lAsEr off       # Case Insensitivity Test
-
-# Box 2
-MOVE 200, 200
-LASER ON
-MOVE 250, 200
-MOVE 250, 250
-MOVE 200, 250
-MOVE 200, 200
-LASER OFF
-
-# Diagonale
-MOVE 100, 100
-LASER ON
-MOVE 250, 250
-LASER OFF
-
-# Fehler Test
-#
-# MVE 100, 100      # Typo                  (Unbekannter Befehl)        Fehlercode 1
-# MOVE 100 200      # Typo 2                (Kein Komma, Syntax)        Fehlercode 2
-# LASER 3           # Inkorrekter Befehl    (Falscher Parameter)        Fehlercode 3
-# MOVE ON, 250      # Inkorrekter Befehl 2  (Falscher Parameter)
-# LASER ON OFF      # Inkorrekter Befehl 3  (Zu viele Parameter)        Fehlercode 4
-# MOVE 100.2 234.4  # Inkorrekter Befehl 4  (Falscher Parametertyp)     Fehlercode 5
-       </string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1" colspan="2">
-         <widget class="QPushButton" name="openButton">
-          <property name="text">
-           <string>Öffnen</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1" colspan="2">
-         <widget class="QPushButton" name="saveButton">
           <property name="text">
            <string>Speichern</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="1" colspan="2">
+        <item row="3" column="2" colspan="2">
          <widget class="QLabel" name="label3">
+          <property name="maximumSize">
+           <size>
+            <width>320</width>
+            <height>16777215</height>
+           </size>
+          </property>
           <property name="text">
            <string>Wertangaben:</string>
           </property>
          </widget>
         </item>
-        <item row="4" column="1">
+        <item row="4" column="2">
          <widget class="QRadioButton" name="relativeRadioButton">
+          <property name="maximumSize">
+           <size>
+            <width>155</width>
+            <height>16777215</height>
+           </size>
+          </property>
           <property name="text">
            <string>Relativ</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="2">
-         <widget class="QRadioButton" name="absoluteRadioButton">
-          <property name="text">
-           <string>Absolut</string>
           </property>
           <property name="checked">
            <bool>false</bool>
           </property>
          </widget>
         </item>
-        <item row="5" column="1" colspan="2">
+        <item row="4" column="3">
+         <widget class="QRadioButton" name="absoluteRadioButton">
+          <property name="maximumSize">
+           <size>
+            <width>155</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Absolut</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="2" colspan="2">
          <widget class="QLabel" name="label4">
+          <property name="maximumSize">
+           <size>
+            <width>320</width>
+            <height>16777215</height>
+           </size>
+          </property>
           <property name="text">
            <string>Fehlermeldungen:</string>
           </property>
          </widget>
         </item>
-        <item row="6" column="1" colspan="2">
+        <item row="6" column="2" colspan="2">
          <widget class="QPlainTextEdit" name="codeLog">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>320</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>320</width>
+            <height>16777215</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <family>Courier</family>
@@ -184,6 +189,25 @@ LASER OFF
 Code in Ordnung.
 ----------------
 </string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" rowspan="6" colspan="2">
+         <widget class="QTextEdit" name="codeEdit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <family>Courier</family>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+          <property name="lineWrapMode">
+           <enum>QTextEdit::WidgetWidth</enum>
           </property>
          </widget>
         </item>
@@ -468,7 +492,10 @@ Code in Ordnung.
               </size>
              </property>
              <property name="inputMask">
-              <string>999; </string>
+              <string>9999; </string>
+             </property>
+             <property name="text">
+              <string>100</string>
              </property>
              <property name="placeholderText">
               <string>Y Koordinate</string>
@@ -490,7 +517,13 @@ Code in Ordnung.
               </size>
              </property>
              <property name="inputMask">
-              <string>999; </string>
+              <string>9999; </string>
+             </property>
+             <property name="text">
+              <string>100</string>
+             </property>
+             <property name="cursorPosition">
+              <number>4</number>
              </property>
              <property name="placeholderText">
               <string>X Koordinate</string>
@@ -525,7 +558,6 @@ Code in Ordnung.
   </widget>
  </widget>
  <tabstops>
-  <tabstop>codeEditor</tabstop>
   <tabstop>openButton</tabstop>
   <tabstop>saveButton</tabstop>
   <tabstop>relativeRadioButton</tabstop>
