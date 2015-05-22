@@ -7,6 +7,10 @@
 
 #include "LCUI_Base.h"
 #include "LCSyntaxHighlighter.h"
+#include "LCGridGraphicScene.h"
+
+class LCController;
+class LCGridGraphicScene;
 
 #pragma mark Lasercutter UI Class
 class LCUserInterface : public QMainWindow, public Ui::MainWindow{
@@ -19,12 +23,16 @@ public:
     LCUserInterface(QMainWindow *parent = 0);
     ~LCUserInterface();
 
+#pragma mark Controller
+
+
+
 #pragma mark Simulation Drawing
 
     void drawLine(QPoint from, QPoint to);
 
-    float drawAnimationTime();
-    void setDrawAnimationTime(float timeInSeconds);
+    int drawAnimationTime();
+    void setDrawAnimationTime(int timeInSeconds);
 
 private slots:
 
@@ -46,12 +54,12 @@ private slots:
 private:
 
 #pragma mark Private Member Variables & Methods
-    LCSyntaxHighlighter * syntaxHighlighter;
+    LCSyntaxHighlighter * _syntaxHighlighter;
 
-    float               _drawAnimationTime;
+    int                   _drawAnimationTime;
+    LCGridGraphicScene  * _graphicsScene;
 
-    QGraphicsScene      * _graphicsScene;
-    QTimer              * _timer;
+    LCController        * _controller;
 };
 
 

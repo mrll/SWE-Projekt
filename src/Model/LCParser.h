@@ -60,12 +60,13 @@ public:
 class LCParserCommand {
 
 public:
-    LCParserCommand(LCCommandCode command, int * parameter, int parameterCount);
+    LCParserCommand(LCCommandCode command, int * parameter, int parameterCount, int line);
     LCParserCommand();
 
     LCCommandCode     command;              /**< Befehl             */
     int             * parameter;            /**< Parameter          */
     int               parameterCount;       /**< Parameterannzahl   */
+    int               line;                 /**< Zeile              */
 };
 
 #pragma mark Typedefs
@@ -154,9 +155,9 @@ private:
  * ^\s*                     - Anfang der Zeile mit optionalen Leerzeichen
  * (MOVE)                   - Gruppe 1: MOVE
  * \s+                      - Mindstens 1 Leerzeichen
- * (\d{1,4})                - Gruppe 2: Zahl zwischen 0 und 9999
+ * (-?\d{1,4})              - Gruppe 2: Zahl zwischen -9999 und 9999
  * \s*,\s*                  - Trennung durch Komma mit optionalen Leerzeichen
- * (\d{1,4})                - Gruppe 3: Zahl zwischen 0 und 9999
+ * (-?\d{1,4})              - Gruppe 3: Zahl zwischen -9999 und 9999
  * (?:\s*\#+.*|\s*)         - Entweder ein Kommentarstring (# + Irgendwas) oder Leerzeichen (optional)
  * $                        - Ende der Zeile
  */

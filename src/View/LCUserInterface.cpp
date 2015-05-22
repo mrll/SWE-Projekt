@@ -8,6 +8,20 @@
 #include <QFileDialog>
 #include <QTextDocumentWriter>
 #include <QTextStream>
+#include <QTime>
+
+static QVector<LCParserCommand> commands = QVector<LCParserCommand>();
+static QVector<LCParserError> errors = QVector<LCParserError>();
+
+#pragma mark Delay Funktion
+
+void delay(double seconds)
+{
+    QTime dieTime= QTime::currentTime().addMSecs((int)(seconds * 1000));
+    while( QTime::currentTime() < dieTime ) {
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+    }
+}
 
 #pragma mark De-/Konstruktor
 
@@ -29,9 +43,12 @@ LCUserInterface::LCUserInterface(QMainWindow *parent) {
     connect(manualLaserMoveButton, SIGNAL(clicked()), this, SLOT(runManualAction()));
     connect(manualLaserStateButton, SIGNAL(clicked()), this, SLOT(toggleLaserAction()));
 
-    syntaxHighlighter = new LCSyntaxHighlighter(codeEdit->document());
+    // Grid Scene
+    _syntaxHighlighter  = new LCSyntaxHighlighter(codeEdit->document());
+    _graphicsScene      = new LCGridGraphicScene(this);
+    simGView->setScene(_graphicsScene);
 
-    relativeRadioButton->setEnabled(false); // Vorerst deaktiviert
+    setDrawAnimationTime(2);
 }
 
 LCUserInterface::~LCUserInterface() {
@@ -70,8 +87,10 @@ void LCUserInterface::saveButtonAction() {
 void LCUserInterface::codeChangedAction() {
     static LCParser parser = LCParser();
 
-    QVector<LCParserCommand> commands = QVector<LCParserCommand>();
-    QVector<LCParserError> errors = QVector<LCParserError>();
+    QPoint minPos(0, 0), maxPos(0, 0);
+
+    commands.clear();
+    errors.clear();
 
     QString logString;
 
@@ -102,6 +121,24 @@ void LCUserInterface::codeChangedAction() {
         codeLogLabel->setText("Code nicht OK!");
     }
 
+    for (int j = 0; j < commands.count(); ++j) {
+        if (commands.at(j).command == LCMoveCommand) {
+            if (commands.at(j).parameter[0] < minPos.x()) {
+                minPos.setX(commands.at(j).parameter[0]);
+            } else if (commands.at(j).parameter[0] > maxPos.x()) {
+                maxPos.setX(commands.at(j).parameter[0]);
+            }
+
+            if (commands.at(j).parameter[1] < minPos.y()) {
+                minPos.setY(commands.at(j).parameter[1]);
+            } else if (commands.at(j).parameter[1] > maxPos.y()) {
+                maxPos.setY(commands.at(j).parameter[1]);
+            }
+        }
+    }
+
+    codeSizeLabel->setText(QString::number(maxPos.x() - minPos.x()) + ", " + QString::number(maxPos.y() - minPos.y()));
+
     cmdCountLabel->setText(QString::number(commands.count()));
     codeLog->document()->setPlainText(logString);
 }
@@ -120,7 +157,51 @@ void LCUserInterface::codeCursorChangedAction() {
 #pragma mark Simulation Tab Actions
 
 void LCUserInterface::runAutomaticAction() {
+    _graphicsScene->clear();
 
+    bool laserOn = false;
+    QPoint currentPosition(0, 0);
+    for (int i = 0; i < commands.count(); ++i) {
+        commandLineLabel->setText(QString::number(commands.at(i).line));
+
+        if (commands.at(i).command == LCPowerCommand) {
+            laserMoveStateLabel->setText("Stand");
+
+            if (commands.at(i).parameter[0]) {
+                commandLabel->setText("LASER ON");
+                laserOnStateLabel->setText("An");
+                laserOn = true;
+            } else {
+                commandLabel->setText("LASER OFF");
+                laserOnStateLabel->setText("Aus");
+                laserOn = false;
+            }
+        } else if (commands.at(i).command == LCMoveCommand) {
+            laserMoveStateLabel->setText("Fahren");
+
+            commandLabel->setText("MOVE " + QString::number(commands.at(i).parameter[0]) + ", " + QString::number(commands.at(i).parameter[1]));
+
+            if (laserOn) {
+                if (relativeRadioButton->isChecked()) {
+                    drawLine(currentPosition, QPoint(currentPosition.x() + commands.at(i).parameter[0],
+                                                     currentPosition.y() + commands.at(i).parameter[1]));
+
+                    currentPosition.setX(currentPosition.x() + commands.at(i).parameter[0]);
+                    currentPosition.setY(currentPosition.y() + commands.at(i).parameter[1]);
+                } else {
+                    drawLine(currentPosition, QPoint(commands.at(i).parameter[0],
+                                                     commands.at(i).parameter[1]));
+
+                    currentPosition.setX(commands.at(i).parameter[0]);
+                    currentPosition.setY(commands.at(i).parameter[1]);
+                }
+
+            }
+        }
+
+        laserPosXLabel->setText(QString::number(currentPosition.x()));
+        laserPosYLabel->setText(QString::number(currentPosition.y()));
+    }
 }
 
 void LCUserInterface::runManualAction() {
@@ -134,12 +215,24 @@ void LCUserInterface::toggleLaserAction() {
 #pragma mark Simulation Drawing
 
 void LCUserInterface::drawLine(QPoint from, QPoint to) {
+    static QPen pen(QBrush(Qt::black, Qt::SolidPattern), 4, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+
+    QPoint stepPoint = from;
+    double xStep = (to.x() - from.x()) / 10.0;
+    double yStep = (to.y() - from.y()) / 10.0;
+
+    for (int i = 0; i < 10; ++i) {
+        _graphicsScene->addLine(stepPoint.x(), stepPoint.y(), stepPoint.x() + xStep, stepPoint.y() + yStep, pen);
+        delay(drawAnimationTime() / 10.0);
+        stepPoint.setX((int) (stepPoint.x() + xStep));
+        stepPoint.setY((int) (stepPoint.y() + yStep));
+    }
 }
 
-float LCUserInterface::drawAnimationTime() {
+int LCUserInterface::drawAnimationTime() {
     return _drawAnimationTime;
 }
 
-void LCUserInterface::setDrawAnimationTime(float timeInSeconds) {
+void LCUserInterface::setDrawAnimationTime(int timeInSeconds) {
     _drawAnimationTime = timeInSeconds;
 }

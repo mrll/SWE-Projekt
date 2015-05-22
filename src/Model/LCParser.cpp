@@ -8,7 +8,7 @@
 #pragma mark RegEx
 /* ---------------------------------------------------------------------------------------------------------------- */
 
-const QRegExp * LCParser::moveExp      = new QRegExp("^\\s*(MOVE)\\s+(\\d{1,4})\\s*,\\s*(\\d{1,4})(?:\\s*\\#+.*|\\s*)$",
+const QRegExp * LCParser::moveExp      = new QRegExp("^\\s*(MOVE)\\s+(-?\\d{1,4})\\s*,\\s*(-?\\d{1,4})(?:\\s*\\#+.*|\\s*)$",
                                                      Qt::CaseSensitive,
                                                      QRegExp::RegExp);
 const QRegExp * LCParser::powerExp     = new QRegExp("^\\s*(LASER)\\s+(ON|OFF)(?:\\s*\\#+.*|\\s*)$",
@@ -45,15 +45,17 @@ LCParserError::LCParserError() {
 /* Konstruktoren        */
 /* ==================== */
 
-LCParserCommand::LCParserCommand(LCCommandCode command, int * parameter, int parameterCount) {
+LCParserCommand::LCParserCommand(LCCommandCode command, int * parameter, int parameterCount, int line) {
     this->command           = command;
     this->parameter         = parameter;
     this->parameterCount    = parameterCount;
+    this->line              = line;
 }
 LCParserCommand::LCParserCommand() {
     this->command           = LCUnknownCommand;
     this->parameter         = (int *) malloc(sizeof(int) * 2);
     this->parameterCount    = 2;
+    this->line              = 0;
 }
 
 #pragma mark LCParser
@@ -94,6 +96,7 @@ bool LCParser::parse(QString code, QVector<LCParserCommand> * commands, QVector<
             // Validatoren testen und gefundene Befehle speichern
             for (int i = 0; i < validators->count(); ++i) {
                 if (validators->at(i)(*it, &command)) {
+                    command.line = it - codeLines.begin();
                     commands->append(command);
                     break;
                 }
@@ -102,7 +105,7 @@ bool LCParser::parse(QString code, QVector<LCParserCommand> * commands, QVector<
             // Kein Befehl gefunden wenn command noch LCUnknownCommand ist
             // Dann nach Fehlertyp suchen und speichern
             if (command.command == LCUnknownCommand) {
-                errors->append(findLineError(*it, it - codeLines.begin()));
+                errors->append(findLineError(*it, command.line));
             }
         }
 
