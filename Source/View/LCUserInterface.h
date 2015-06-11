@@ -24,8 +24,7 @@ public:
     ~LCUserInterface();
 
 #pragma mark Controller
-
-
+    LCController * controller;
 
 #pragma mark Simulation Drawing
 

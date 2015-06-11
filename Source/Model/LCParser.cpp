@@ -84,7 +84,7 @@ bool LCParser::parse(QString code, QVector<LCParserCommand> * commands, QVector<
     }
 
     // Der Code wird in Zeilen aufgespalten und iteriert
-    QStringList codeLines = code.split("\n", QString::SplitBehavior::KeepEmptyParts);
+    QStringList codeLines = code.split("\n", QString::KeepEmptyParts);
     QStringList::iterator it = codeLines.begin();
 
     while (it != codeLines.end()) {
@@ -94,7 +94,7 @@ bool LCParser::parse(QString code, QVector<LCParserCommand> * commands, QVector<
             LCParserCommand command;
 
             // Validatoren testen und gefundene Befehle speichern
-            for (int i = 0; i < validators->count(); ++i) {
+            for (int i = 0; i < validators->count(); i++) {
                 if (validators->at(i)(*it, &command)) {
                     command.line = it - codeLines.begin();
                     commands->append(command);
