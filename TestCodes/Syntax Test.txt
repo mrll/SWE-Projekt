@@ -11,7 +11,7 @@ lAsEr ofF       # Case Insensitivity Test
 # Box 2
 MOVE 550, 550
 LASER ON
-MOVE 950, 600
+MOVE 950, 550
 MOVE 950, 950
 MOVE 550, 950
 MOVE 550, 550

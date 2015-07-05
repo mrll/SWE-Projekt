@@ -31,6 +31,8 @@ private:
     std::vector<LCSParserCommand>   _commands;
     std::vector<LCSParserError>     _errors;
 
+    LCSParserCommand                _currentCommand;
+    LCSPoint                        _codeGridSize;
 public:
     LCSLaser();
 
@@ -60,6 +62,9 @@ public:
     std::vector<LCSParserError> errors();
 
     bool runInstructions(bool relative, LCSSimulationInterface * interface);
+
+    LCSPoint codeGridSize();
+    LCSParserCommand currentCommand();
 protected:
 
 };

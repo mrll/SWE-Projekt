@@ -10,8 +10,10 @@
 #include <QTime>
 
 void delay(double seconds) {
+    // Delay Funktion ohne UserInterface unterbrechung
     QTime dieTime= QTime::currentTime().addMSecs((int)(seconds * 1000));
     while( QTime::currentTime() < dieTime ) {
+        // Events weithin ausführen
         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
     }
 }
@@ -44,7 +46,7 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::openButtonAction() {
-    QString fn = QFileDialog::getOpenFileName(this, tr("Datei öffnen..."),
+    QString fn = QFileDialog::getOpenFileName(this, tr("Datei oeffnen..."),
                                               QString(), tr("Text Dateien (*.txt);;Alle Dateien (*)"));
     if (!fn.isEmpty()) {
         QFile textFile(fn);
@@ -72,6 +74,7 @@ void MainWindow::saveButtonAction() {
 }
 
 void MainWindow::codeChangedAction() {
+    // Code parsen
     bool success = this->_laser.parseInstructionCode(ui->codeEdit->document()->toPlainText().toStdString());
 
     // Log String
@@ -92,6 +95,7 @@ void MainWindow::codeChangedAction() {
     } else {
         logString += "Fehlermeldungen:\n\n";
 
+        // Fehlermeldungen sammeln
         for (size_t i = 0; i < errors.size(); i++) {
             logString += "Zeile: " + QString::number(errors.at(i).line)  + "\n";
             logString += "Meldung:\n" + QString(errors.at(i).msg.c_str()) + "\n\n";
@@ -100,14 +104,19 @@ void MainWindow::codeChangedAction() {
         // Sim Interface
         ui->runCodeButton->setEnabled(false);
         ui->codeLogLabel->setText("Code nicht OK!");
-
     }
 
     ui->cmdCountLabel->setText(QString::number(commands.size()));
     ui->codeLog->document()->setPlainText(logString);
+
+    LCSPoint codeSize = this->_laser.codeGridSize();
+    ui->codeSizeLabel->setText(QString::number(codeSize.x) + " x " + QString::number(codeSize.y));
+
+    this->laserUpdate();
 }
 
 void MainWindow::codeCursorChangedAction() {
+    // Aktuelle Zeile Highlighten
     QTextEdit::ExtraSelection highlight;
     highlight.cursor = ui->codeEdit->textCursor();
     highlight.format.setProperty(QTextFormat::FullWidthSelection, true);
@@ -119,6 +128,7 @@ void MainWindow::codeCursorChangedAction() {
 }
 
 void MainWindow::runAutomaticAction() {
+    // Grid löschen und Laser starten
     _graphicsScene->clear();
     this->_laser.runInstructions(ui->relativeRadioButton->isChecked(), this);
 }
@@ -130,6 +140,7 @@ void MainWindow::drawLine(LCSPoint from, LCSPoint to) {
     double xStep = (to.x - from.x) / 10.0;
     double yStep = (to.y - from.y) / 10.0;
 
+    // Linie Schrittweise malen (Animationszwecke)
     for (int i = 0; i < 10; ++i) {
         _graphicsScene->addLine(stepPoint.x(), stepPoint.y(), stepPoint.x() + xStep, stepPoint.y() + yStep, pen);
         delay(drawAnimationTime() / 10.0);
@@ -142,7 +153,44 @@ void MainWindow::drawLine(LCSPoint from, LCSPoint to) {
 }
 
 void MainWindow::laserUpdate() {
+    if (this->_laser.isLaserOn()) {
+        ui->laserOnStateLabel->setText("AN");
+    } else {
+        ui->laserOnStateLabel->setText("AUS");
+    }
 
+    if (this->_laser.isMoving()) {
+        ui->laserMoveStateLabel->setText("MOVE");
+    } else {
+        ui->laserMoveStateLabel->setText("HALT");
+    }
+
+    LCSParserCommand cmd = this->_laser.currentCommand();
+    // Kein Befehl
+    if (cmd.command == LCSCmdUnknown) {
+        ui->commandLineLabel->setText("");
+        ui->commandLabel->setText("NONE");
+    } else {
+        // Zeilennummer
+        ui->commandLineLabel->setText("Line " + QString::number(cmd.line) + ":");
+        // Move Befehl
+        if (cmd.command == LCSCmdEngine) {
+            ui->commandLabel->setText("MOVE " + QString::number(cmd.parameter[0]) + ", " + QString::number(cmd.parameter[1]));
+        // Laser Befehl
+        } else if (cmd.command == LCSCmdLaser) {
+            if (cmd.parameter[0]) {
+                ui->commandLabel->setText("LASER ON");
+            } else {
+                ui->commandLabel->setText("LASER OFF");
+            }
+        // Unbekannter Befehl
+        } else {
+            ui->commandLabel->setText("Unbekannter Befehl");
+        }
+    }
+
+    // Kurz Warten da sonst einige Aktualisierungen nicht sichtbar sind
+    delay(this->_drawAnimationTime / 4.0);
 }
 
 int MainWindow::drawAnimationTime() {

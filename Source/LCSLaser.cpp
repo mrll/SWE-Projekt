@@ -7,7 +7,7 @@
 #include <iostream>
 
 /* ---------------------------------------------------------------------------------------------------------------- */
-/* Point Typ                                                                                                        */
+/* Point Typ (Hilfsfunktionen)                                                                                      */
 /* ---------------------------------------------------------------------------------------------------------------- */
 
 LCSPoint zeroPoint() {
@@ -30,11 +30,15 @@ LCSPoint newPoint(int x, int y) {
 /* ======================= */
 
 LCSLaser::LCSLaser() {
+    // Defaultwerte setzen
     this->_engineState = new HALT(this);
     this->_laserState  = new OFF();
 
     this->_actualPosition  = zeroPoint();
     this->_desiredPosition = zeroPoint();
+
+    this->_codeGridSize    = zeroPoint();
+    this->_currentCommand  = LCSParserCommand();
 
     _commands.clear();
     _errors.clear();
@@ -115,11 +119,35 @@ LCSPoint LCSLaser::desiredPosition() {
 /* ======================= */
 
 bool LCSLaser::parseInstructionCode(std::string code) {
+    // Löschen alter Befehle und Fehler
     this->_errors.clear();
     this->_commands.clear();
 
+    // Code Parsen
     this->_parser.parse(code, &(this->_commands), &(this->_errors));
 
+    // Auslesen der Größe des zu zeichnenden Bildes
+    int minX = 0, maxX = 0, minY = 0, maxY = 0;
+    for (LCSParserCommand command : this->_commands) {
+        if (command.command == LCSCmdEngine) {
+            if (command.parameter[0] < minX) {
+                minX = command.parameter[0];
+            }
+            if (command.parameter[0] > maxX) {
+                maxX = command.parameter[0];
+            }
+            if (command.parameter[1] < minY) {
+                minY = command.parameter[1];
+            }
+            if (command.parameter[1] > maxY) {
+                maxY = command.parameter[1];
+            }
+        }
+    }
+    this->_codeGridSize.x = (maxX - minX);
+    this->_codeGridSize.y = (maxY - minY);
+
+    // Ok wenn keine Fehler
     return this->_errors.size() == 0;
 }
 
@@ -131,36 +159,53 @@ std::vector<LCSParserError> LCSLaser::errors() {
     return this->_errors;
 }
 
+LCSPoint LCSLaser::codeGridSize() {
+    return this->_codeGridSize;
+}
+
+LCSParserCommand LCSLaser::currentCommand() {
+    return this->_currentCommand;
+}
+
 /* ======================= */
 /* Befehle ausführen       */
 /* ======================= */
 
 bool LCSLaser::runInstructions(bool relative, LCSSimulationInterface * interface) {
+    // Ausführung bei Fehlern verhindern
     if (this->_errors.size() > 0) {
         return false;
     } else {
+        // Positionen des Lasers zurücksetzen
         this->_actualPosition = zeroPoint();
         this->_desiredPosition = zeroPoint();
         interface->laserUpdate();
 
+        // Durch Befehle iterieren und ausführen
         for (LCSParserCommand command : this->_commands) {
+            this->_currentCommand = command;
             switch (command.command) {
                 case LCSCmdEngine: {
                     LCSPoint p;
                     if (relative) {
+                        // Relative Werte berechnen
                         p = newPoint(this->_actualPosition.x + command.parameter[0],
                                      this->_actualPosition.y + command.parameter[1]);
                     } else {
+                        // Absolute Werte nur setzen
                         p = newPoint(command.parameter[0], command.parameter[1]);
                     }
                     this->move(p);
+                    interface->laserUpdate();
                     if (interface != nullptr && this->isLaserOn()) {
+                        // Wenn eine View gegeben und der Laser an ist ist zeichnen
                         interface->drawLine(this->_actualPosition, p);
                     }
                     this->halt();
                     break;
                 }
                 case LCSCmdLaser: {
+                    // Laser an/aus schalten
                     if (command.parameter[0] == 0) {
                         this->halt();
                         this->off();
@@ -178,11 +223,13 @@ bool LCSLaser::runInstructions(bool relative, LCSSimulationInterface * interface
                 }
             }
             if (interface != nullptr) {
+                // Update event senden, da Werte geändert wurden
                 interface->laserUpdate();
             }
         }
 
         this->halt();
+        this->_currentCommand = LCSParserCommand();
         return true;
     }
 }
