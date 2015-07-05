@@ -1,16 +1,11 @@
-//
-// Created by Matthias Röll, Marc Wüst on 09.05.15.
-//
+#include "MainWindow.h"
+#include <QApplication>
 
-#include "View/LCUserInterface.h"
-#include "Controller/LCController.h"
+int main(int argc, char *argv[])
+{
+    QApplication app(argc, argv);
+    MainWindow mainWindow;
 
-int main(int argc, char *argv[]) {
-    LCController * controller = new LCController();
-
-    QApplication a(argc, argv);
-    LCUserInterface userInterface;
-    userInterface.controller = controller;
-    userInterface.show();
-    return a.exec();
+    mainWindow.show();
+    return app.exec();
 }
