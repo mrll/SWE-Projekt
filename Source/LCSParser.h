@@ -121,12 +121,7 @@ public:
     /**
      * Fehleranalyse
      *
-     * Sucht nach der Fehlerursache in einer Zeile. Und gibt einen LCParserError zurück.
-     *
-     * Die Fehler werden in folgender Reihenfolge gesucht:
-     * * Parametertyp
-     * * Parameteranzahl
-     * * Syntax
+     * Erstellt einen Fehlebericht anhand eines LCSParserError Objekts
      *
      * @param string Zeilenstring
      * @param line Zeilennummer

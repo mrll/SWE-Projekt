@@ -127,13 +127,7 @@ LCSParserError LCSParser::findLineError(std::string code, int line) {
     std::stringstream   msg;
     LCSErrorCode        err = LCSErrNone;
 
-    std::smatch engineMatch;
-    std::smatch powerMatch;
-
-    std::regex_match(code, engineMatch, *LCSParser::moveExp);
-    std::regex_match(code, powerMatch, *LCSParser::powerExp);
-
-    // Fehlertyp finden
+    msg << "Syntaxfehler: " << code;
 
     return LCSParserError(code, msg.str(), line, err);
 }

@@ -98,7 +98,7 @@ void MainWindow::codeChangedAction() {
         // Fehlermeldungen sammeln
         for (size_t i = 0; i < errors.size(); i++) {
             logString += "Zeile: " + QString::number(errors.at(i).line)  + "\n";
-            logString += "Meldung:\n" + QString(errors.at(i).msg.c_str()) + "\n\n";
+            logString += "Code:\n" + QString(errors.at(i).code.c_str()) + "\n\n";
         }
 
         // Sim Interface
