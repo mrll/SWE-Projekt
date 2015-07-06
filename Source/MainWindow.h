@@ -12,6 +12,10 @@ namespace Ui {
 class MainWindow;
 }
 
+/* ---------------------------------------------------------------------------------------------------------------- */
+/* Main Window UI Controller Klasse                                                                                 */
+/* ---------------------------------------------------------------------------------------------------------------- */
+
 class MainWindow : public QMainWindow, LCSSimulationInterface
 {
     Q_OBJECT
@@ -21,31 +25,65 @@ public:
     ~MainWindow();
 
 private:
+    /**
+     * @brief ui
+     */
     Ui::MainWindow * ui;
 
 public:
+    /**
+     * @brief drawLine
+     * @param from
+     * @param to
+     */
     void drawLine(LCSPoint from, LCSPoint to);
+    /**
+     * @brief laserUpdate
+     */
     void laserUpdate();
 
+    /**
+     * @brief drawAnimationTime
+     * @return
+     */
     int drawAnimationTime();
+    /**
+     * @brief setDrawAnimationTime
+     * @param timeInSeconds
+     */
     void setDrawAnimationTime(int timeInSeconds);
 
 private slots:
+    /**
+     * @brief openButtonAction
+     */
     void openButtonAction();
+    /**
+     * @brief saveButtonAction
+     */
     void saveButtonAction();
 
+    /**
+     * @brief codeChangedAction
+     */
     void codeChangedAction();
+    /**
+     * @brief codeCursorChangedAction
+     */
     void codeCursorChangedAction();
 
+    /**
+     * @brief runAutomaticAction
+     */
     void runAutomaticAction();
 
 private:
-    LCSSyntaxHighlighter * _syntaxHighlighter;
+    LCSSyntaxHighlighter * _syntaxHighlighter;  /**< Syntaxerkennung    */
 
-    int                    _drawAnimationTime;
-    LCSGridGraphicScene  * _graphicsScene;
+    int                    _drawAnimationTime;  /**< Animationszeit     */
+    LCSGridGraphicScene  * _graphicsScene;      /**< GraphicScene       */
 
-    LCSLaser               _laser;
+    LCSLaser               _laser;              /**< Laser Controller   */
 };
 
 #endif // MAINWINDOW_H

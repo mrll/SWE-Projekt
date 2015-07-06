@@ -8,11 +8,23 @@
 
 #include <QGraphicsScene>
 
+/* ---------------------------------------------------------------------------------------------------------------- */
+/* Abgeleitete QGraphicScene inkl. Grid                                                                             */
+/* ---------------------------------------------------------------------------------------------------------------- */
+
 class LCSGridGraphicScene : public QGraphicsScene {
 public:
     LCSGridGraphicScene(QObject *parent);
 
 protected:
+    /**
+     * Hintergrund Zeichen Methode
+     *
+     * Die Methode wird hier überschrieben,
+     * um ein Grid auf der GraphicScene darzutellen.
+     *
+     * @see QGraphicScene::drawBackground
+     */
     void drawBackground(QPainter * painter, const QRectF & rect );
 };
 

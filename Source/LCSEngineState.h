@@ -3,16 +3,40 @@
 
 #include "LCSLaser.h"
 
+/* ---------------------------------------------------------------------------------------------------------------- */
+/* Engine State Basisklasse                                                                                         */
+/* ---------------------------------------------------------------------------------------------------------------- */
+
 /**
  * Basisklasse des Zustands der Bewegungsmotoren
  */
 class LCSEngineState
 {
 public:
+    /**
+     * Senden der Hardwarebefehle für die Bewegung
+     *
+     * @param LCSLaser * laser       Laser für die Ausführung
+     * @param LCSPoint * destination Zielkoordinaten
+     */
     virtual void move(LCSLaser * laser, LCSPoint destination);
+    /**
+     * Senden der Hardwarebefehle zum Beenden einer Bewegung
+     *
+     * @param LCSLaser * laser       Laser für die Ausführung
+     */
     virtual void halt(LCSLaser * laser);
+    /**
+     * Bewegungsindikator
+     *
+     * @return true wenn in Bewegung, sonst false
+     */
     virtual bool moving();
 };
+
+/* ---------------------------------------------------------------------------------------------------------------- */
+/* Move State                                                                                                       */
+/* ---------------------------------------------------------------------------------------------------------------- */
 
 /**
  * Move-Zustandsklasse
@@ -24,6 +48,10 @@ public:
     void halt(LCSLaser * laser);
     bool moving();
 };
+
+/* ---------------------------------------------------------------------------------------------------------------- */
+/* Halt State                                                                                                       */
+/* ---------------------------------------------------------------------------------------------------------------- */
 
 /**
  * Halt-Zustandsklasse
