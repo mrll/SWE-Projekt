@@ -225,11 +225,20 @@ bool LCSLaser::runInstructions(bool relative, LCSSimulationInterface * interface
             if (interface != nullptr) {
                 // Update event senden, da Werte geändert wurden
                 interface->laserUpdate();
+                // Auf weitere Ausführung testen
+                if (!interface->proceedExecution()) {
+                    this->off();
+                    break;
+                }
             }
         }
 
         this->halt();
         this->_currentCommand = LCSParserCommand();
+        if (interface != nullptr) {
+            // Update event senden, da Werte geändert wurden
+            interface->laserUpdate();
+        }
         return true;
     }
 }

@@ -31,7 +31,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->codeEdit, SIGNAL(cursorPositionChanged()), this, SLOT(codeCursorChangedAction()));
 
     // Simualtion Inputs
-    connect(ui->runCodeButton, SIGNAL(clicked()), this, SLOT(runAutomaticAction()));
+    connect(ui->runCodeButton,  SIGNAL(clicked()), this, SLOT(runAutomaticAction()));
+    connect(ui->stopCodeButton, SIGNAL(clicked()), this, SLOT(stopAutomaticAction()));
 
     // Grid Scene
     _syntaxHighlighter  = new LCSSyntaxHighlighter(ui->codeEdit->document());
@@ -39,6 +40,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->simGView->setScene(_graphicsScene);
 
     setDrawAnimationTime(2);
+
+    _proceedExec = true;
 }
 
 MainWindow::~MainWindow() {
@@ -130,7 +133,12 @@ void MainWindow::codeCursorChangedAction() {
 void MainWindow::runAutomaticAction() {
     // Grid löschen und Laser starten
     _graphicsScene->clear();
+    this->_proceedExec = true;
     this->_laser.runInstructions(ui->relativeRadioButton->isChecked(), this);
+}
+
+void MainWindow::stopAutomaticAction() {
+    this->_proceedExec = false;
 }
 
 void MainWindow::drawLine(LCSPoint from, LCSPoint to) {
@@ -194,6 +202,10 @@ void MainWindow::laserUpdate() {
 
     // Kurz Warten da sonst einige Aktualisierungen nicht sichtbar sind
     delay(this->_drawAnimationTime / 4.0);
+}
+
+bool MainWindow::proceedExecution() {
+    return _proceedExec;
 }
 
 int MainWindow::drawAnimationTime() {

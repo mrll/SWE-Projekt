@@ -53,6 +53,14 @@ public:
      * Wird gesendet sobeld sich Werte des Lasers ändern.
      */
     virtual void laserUpdate() = 0;
+    /**
+     * @brief proceedExecution
+     *
+     * Zeigt an ab die Ausführung der Befehle weiterlaufen soll.
+     *
+     * @return Betriebsindikator
+     */
+    virtual bool proceedExecution() = 0;
 };
 
 /* ---------------------------------------------------------------------------------------------------------------- */

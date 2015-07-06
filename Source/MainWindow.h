@@ -41,6 +41,11 @@ public:
      * @brief laserUpdate
      */
     void laserUpdate();
+    /**
+     * @brief proceedExecution
+     * @return
+     */
+    bool proceedExecution();
 
     /**
      * @brief drawAnimationTime
@@ -76,14 +81,20 @@ private slots:
      * @brief runAutomaticAction
      */
     void runAutomaticAction();
+    /**
+     * @brief stopAutomaticAction
+     */
+    void stopAutomaticAction();
 
 private:
-    LCSSyntaxHighlighter * _syntaxHighlighter;  /**< Syntaxerkennung    */
+    LCSSyntaxHighlighter * _syntaxHighlighter;  /**< Syntaxerkennung        */
 
-    int                    _drawAnimationTime;  /**< Animationszeit     */
-    LCSGridGraphicScene  * _graphicsScene;      /**< GraphicScene       */
+    int                    _drawAnimationTime;  /**< Animationszeit         */
+    LCSGridGraphicScene  * _graphicsScene;      /**< GraphicScene           */
 
-    LCSLaser               _laser;              /**< Laser Controller   */
+    LCSLaser               _laser;              /**< Laser Controller       */
+
+    bool                   _proceedExec;        /**< Ausführungsindikator   */
 };
 
 #endif // MAINWINDOW_H
