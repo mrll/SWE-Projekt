@@ -61,6 +61,12 @@ public:
      * @return Betriebsindikator
      */
     virtual bool proceedExecution() = 0;
+    /**
+     * @brief finishedExecution
+     *
+     * Benachrichtigung über das Ende einer Befehlsausführung
+     */
+    virtual void finishedExecution() = 0;
 };
 
 /* ---------------------------------------------------------------------------------------------------------------- */

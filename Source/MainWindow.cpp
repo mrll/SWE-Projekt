@@ -9,6 +9,10 @@
 #include <QTextStream>
 #include <QTime>
 
+/* ---------------------------------------------------------------------------------------------------------------- */
+/* Delay Funktion (für Animation)                                                                                   */
+/* ---------------------------------------------------------------------------------------------------------------- */
+
 void delay(double seconds) {
     // Delay Funktion ohne UserInterface unterbrechung
     QTime dieTime= QTime::currentTime().addMSecs((int)(seconds * 1000));
@@ -17,6 +21,14 @@ void delay(double seconds) {
         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
     }
 }
+
+/* ---------------------------------------------------------------------------------------------------------------- */
+/* GUI View Controller                                                                                              */
+/* ---------------------------------------------------------------------------------------------------------------- */
+
+/* ======================= */
+/* Konstruktor             */
+/* ======================= */
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -30,9 +42,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->codeEdit, SIGNAL(textChanged()), this, SLOT(codeChangedAction()));
     connect(ui->codeEdit, SIGNAL(cursorPositionChanged()), this, SLOT(codeCursorChangedAction()));
 
-    // Simualtion Inputs
+    // Simulation Inputs
     connect(ui->runCodeButton,  SIGNAL(clicked()), this, SLOT(runAutomaticAction()));
     connect(ui->stopCodeButton, SIGNAL(clicked()), this, SLOT(stopAutomaticAction()));
+
+    connect(ui->stepDelaySpinner, SIGNAL(valueChanged(double)), this, SLOT(stepDelaySpinnerAction()));
+    connect(ui->drawDelaySpinner, SIGNAL(valueChanged(double)), this, SLOT(drawDelaySpinnerAction()));
+
+    connect(ui->gridSizeSpinner, SIGNAL(valueChanged(int)),     this, SLOT(gridSizeSpinnerAction()));
 
     // Grid Scene
     _syntaxHighlighter  = new LCSSyntaxHighlighter(ui->codeEdit->document());
@@ -51,6 +68,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 MainWindow::~MainWindow() {
     delete ui;
 }
+
+/* ======================= */
+/* Öffnen & Speichern      */
+/* ======================= */
 
 void MainWindow::openButtonAction() {
     QString fn = QFileDialog::getOpenFileName(this, tr("Datei oeffnen..."),
@@ -79,6 +100,10 @@ void MainWindow::saveButtonAction() {
         ui->codeEdit->document()->setModified(false);
     }
 }
+
+/* ======================= */
+/* Editor Änderungen       */
+/* ======================= */
 
 void MainWindow::codeChangedAction() {
     // Code parsen
@@ -134,6 +159,10 @@ void MainWindow::codeCursorChangedAction() {
     ui->codeEdit->setExtraSelections(extras);
 }
 
+/* ======================= */
+/* Befehlsausführung       */
+/* ======================= */
+
 void MainWindow::runAutomaticAction() {
     // Grid löschen und Laser starten
     _graphicsScene->clear();
@@ -149,6 +178,31 @@ void MainWindow::stopAutomaticAction() {
     ui->stopCodeButton->setEnabled(false);
 }
 
+/* ======================= */
+/* Animationszeiten Events */
+/* ======================= */
+
+void MainWindow::drawDelaySpinnerAction() {
+    _drawAnimationTime = ui->drawDelaySpinner->value();
+}
+
+void MainWindow::stepDelaySpinnerAction() {
+    _stepAnimationTime = ui->stepDelaySpinner->value();
+}
+
+/* ======================= */
+/* Grid Abstand Event      */
+/* ======================= */
+
+void MainWindow::gridSizeSpinnerAction() {
+    _graphicsScene->setGridStep(ui->gridSizeSpinner->value());
+    ui->simGView->update();
+}
+
+/* ======================= */
+/* LCSSimulationInterface  */
+/* ======================= */
+
 void MainWindow::drawLine(LCSPoint from, LCSPoint to) {
     static QPen pen(QBrush(Qt::black, Qt::SolidPattern), 4, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
@@ -157,7 +211,7 @@ void MainWindow::drawLine(LCSPoint from, LCSPoint to) {
     double yStep = (to.y - from.y) / 10.0;
 
     // Linie Schrittweise malen (Animationszwecke)
-    for (int i = 0; i < 10; ++i) {
+    for (int i = 0; i < 9; ++i) {
         _graphicsScene->addLine(stepPoint.x(), stepPoint.y(), stepPoint.x() + xStep, stepPoint.y() + yStep, pen);
         delay(drawAnimationTime() / 10.0);
         stepPoint.setX((int) (stepPoint.x() + xStep));
@@ -166,6 +220,12 @@ void MainWindow::drawLine(LCSPoint from, LCSPoint to) {
         ui->laserPosXLabel->setText(QString::number(stepPoint.x()));
         ui->laserPosYLabel->setText(QString::number(stepPoint.y()));
     }
+    // Den letzten Schritt mit den Zielwerten zeichnen, da sonst eine Ungenauigkeit durch stepPoint entstehen kann
+    _graphicsScene->addLine(stepPoint.x(), stepPoint.y(), to.x, to.y, pen);
+    delay(drawAnimationTime() / 10.0);
+
+    ui->laserPosXLabel->setText(QString::number(stepPoint.x()));
+    ui->laserPosYLabel->setText(QString::number(stepPoint.y()));
 }
 
 void MainWindow::laserUpdate() {
@@ -216,18 +276,29 @@ bool MainWindow::proceedExecution() {
     return _proceedExec;
 }
 
-int MainWindow::drawAnimationTime() {
+void MainWindow::finishedExecution() {
+    ui->runCodeButton->setEnabled(true);
+    ui->stopCodeButton->setEnabled(false);
+}
+
+/* ======================= */
+/* Getter und Setter       */
+/* ======================= */
+
+double MainWindow::drawAnimationTime() {
     return _drawAnimationTime;
 }
 
-void MainWindow::setDrawAnimationTime(int timeInSeconds) {
+void MainWindow::setDrawAnimationTime(double timeInSeconds) {
     _drawAnimationTime = timeInSeconds;
+    ui->drawDelaySpinner->setValue(timeInSeconds);
 }
 
-int MainWindow::stepAnimationTime() {
+double MainWindow::stepAnimationTime() {
     return _stepAnimationTime;
 }
 
-void MainWindow::setStepAnimationTime(int timeInSeconds) {
+void MainWindow::setStepAnimationTime(double timeInSeconds) {
     _stepAnimationTime = timeInSeconds;
+    ui->stepDelaySpinner->setValue(timeInSeconds);
 }

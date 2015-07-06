@@ -7,8 +7,6 @@
 
 #include <QPainter>
 
-static const int GRID_STEP = 25;
-
 inline qreal round(qreal val, int step) {
     int tmp = int(val) + step /2;
     tmp -= tmp % step;
@@ -16,7 +14,7 @@ inline qreal round(qreal val, int step) {
 }
 
 LCSGridGraphicScene::LCSGridGraphicScene(QObject *parent ) : QGraphicsScene(parent) {
-
+    _gridStep = 25;
 }
 
 void LCSGridGraphicScene::drawBackground(QPainter *painter, const QRectF &rect)
@@ -24,22 +22,30 @@ void LCSGridGraphicScene::drawBackground(QPainter *painter, const QRectF &rect)
     painter->setPen(QPen(Qt::lightGray));
 
     // draw horizontal grid
-    qreal start = round(rect.top(), GRID_STEP);
+    qreal start = round(rect.top(), _gridStep);
     if (start > rect.top()) {
-        start -= GRID_STEP;
+        start -= _gridStep;
     }
-    for (qreal y = start - GRID_STEP; y < rect.bottom(); ) {
-        y += GRID_STEP;
+    for (qreal y = start - _gridStep; y < rect.bottom(); ) {
+        y += _gridStep;
         painter->drawLine((int)rect.left(), (int)y, (int)rect.right(), (int)y);
     }
 
     // now draw vertical grid
-    start = round(rect.left(), GRID_STEP);
+    start = round(rect.left(), _gridStep);
     if (start > rect.left()) {
-        start -= GRID_STEP;
+        start -= _gridStep;
     }
-    for (qreal x = start - GRID_STEP; x < rect.right(); ) {
-        x += GRID_STEP;
+    for (qreal x = start - _gridStep; x < rect.right(); ) {
+        x += _gridStep;
         painter->drawLine((int)x, (int)rect.top(), (int)x, (int)rect.bottom());
     }
+}
+
+int LCSGridGraphicScene::getGridStep() {
+    return _gridStep;
+}
+
+void LCSGridGraphicScene::setGridStep(int size) {
+    _gridStep = size;
 }

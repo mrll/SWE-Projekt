@@ -16,6 +16,9 @@ class LCSGridGraphicScene : public QGraphicsScene {
 public:
     LCSGridGraphicScene(QObject *parent);
 
+    int getGridStep();
+    void setGridStep(int size);
+
 protected:
     /**
      * Hintergrund Zeichen Methode
@@ -26,6 +29,9 @@ protected:
      * @see QGraphicScene::drawBackground
      */
     void drawBackground(QPainter * painter, const QRectF & rect );
+
+private:
+    int _gridStep;
 };
 
 

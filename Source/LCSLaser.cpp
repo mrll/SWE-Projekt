@@ -238,6 +238,8 @@ bool LCSLaser::runInstructions(bool relative, LCSSimulationInterface * interface
         if (interface != nullptr) {
             // Update event senden, da Werte geändert wurden
             interface->laserUpdate();
+            // Ausführung der Befehle wurde beendet
+            interface->finishedExecution();
         }
         return true;
     }
