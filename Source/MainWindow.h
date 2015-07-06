@@ -58,6 +58,17 @@ public:
      */
     void setDrawAnimationTime(int timeInSeconds);
 
+    /**
+     * @brief stepAnimationTime
+     * @return
+     */
+    int stepAnimationTime();
+    /**
+     * @brief setStepAnimationTime
+     * @param timeInSeconds
+     */
+    void setStepAnimationTime(int timeInSeconds);
+
 private slots:
     /**
      * @brief openButtonAction
@@ -89,7 +100,8 @@ private slots:
 private:
     LCSSyntaxHighlighter * _syntaxHighlighter;  /**< Syntaxerkennung        */
 
-    int                    _drawAnimationTime;  /**< Animationszeit         */
+    int                    _drawAnimationTime;  /**< Animationszeit Draw    */
+    int                    _stepAnimationTime;  /**< Animationszeit Steps   */
     LCSGridGraphicScene  * _graphicsScene;      /**< GraphicScene           */
 
     LCSLaser               _laser;              /**< Laser Controller       */

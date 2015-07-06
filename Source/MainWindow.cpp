@@ -39,7 +39,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     _graphicsScene      = new LCSGridGraphicScene(this);
     ui->simGView->setScene(_graphicsScene);
 
+    ui->runCodeButton->setEnabled(true);
+    ui->stopCodeButton->setEnabled(false);
+
     setDrawAnimationTime(2);
+    setStepAnimationTime(0.5);
 
     _proceedExec = true;
 }
@@ -134,11 +138,15 @@ void MainWindow::runAutomaticAction() {
     // Grid löschen und Laser starten
     _graphicsScene->clear();
     this->_proceedExec = true;
+    ui->stopCodeButton->setEnabled(true);
+    ui->runCodeButton->setEnabled(false);
     this->_laser.runInstructions(ui->relativeRadioButton->isChecked(), this);
 }
 
 void MainWindow::stopAutomaticAction() {
     this->_proceedExec = false;
+    ui->runCodeButton->setEnabled(true);
+    ui->stopCodeButton->setEnabled(false);
 }
 
 void MainWindow::drawLine(LCSPoint from, LCSPoint to) {
@@ -201,7 +209,7 @@ void MainWindow::laserUpdate() {
     ui->laserPosYLabel->setText(QString::number(this->_laser.actualPosition().y));
 
     // Kurz Warten da sonst einige Aktualisierungen nicht sichtbar sind
-    delay(this->_drawAnimationTime / 4.0);
+    delay(this->_stepAnimationTime);
 }
 
 bool MainWindow::proceedExecution() {
@@ -214,4 +222,12 @@ int MainWindow::drawAnimationTime() {
 
 void MainWindow::setDrawAnimationTime(int timeInSeconds) {
     _drawAnimationTime = timeInSeconds;
+}
+
+int MainWindow::stepAnimationTime() {
+    return _stepAnimationTime;
+}
+
+void MainWindow::setStepAnimationTime(int timeInSeconds) {
+    _stepAnimationTime = timeInSeconds;
 }

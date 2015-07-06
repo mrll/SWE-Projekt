@@ -429,7 +429,7 @@ Code in Ordnung.
               </font>
              </property>
              <property name="text">
-              <string>Größe:</string>
+              <string>Größe (absolut):</string>
              </property>
             </widget>
            </item>
