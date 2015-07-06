@@ -25,65 +25,59 @@ public:
     ~MainWindow();
 
 private:
-    /**
-     * @brief ui
-     */
     Ui::MainWindow * ui;
 
 public:
-    /**
-     * @brief drawLine
-     * @param from
-     * @param to
-     */
+
+    // Siehe LCSSimulationInterface in LCLaser.h
     void drawLine(LCSPoint from, LCSPoint to);
-    /**
-     * @brief laserUpdate
-     */
     void laserUpdate();
+    bool proceedExecution();
+    void finishedExecution();
 
     /**
-     * @brief drawAnimationTime
-     * @return
+     *  Setter & Getter für die Zeichenverzögerung
      */
-    int drawAnimationTime();
+    double drawAnimationTime();
+    void setDrawAnimationTime(double timeInSeconds);
+
     /**
-     * @brief setDrawAnimationTime
-     * @param timeInSeconds
+     *  Setter und Getter für die Befehlsverzögerung
      */
-    void setDrawAnimationTime(int timeInSeconds);
+    double stepAnimationTime();
+    void setStepAnimationTime(double timeInSeconds);
 
 private slots:
-    /**
-     * @brief openButtonAction
-     */
-    void openButtonAction();
-    /**
-     * @brief saveButtonAction
-     */
-    void saveButtonAction();
 
-    /**
-     * @brief codeChangedAction
+    /*  Private Slots
+     *
+     *  Die folgenden Methoden werden durch die UserInterface Elemente aufgerufen.
      */
-    void codeChangedAction();
-    /**
-     * @brief codeCursorChangedAction
-     */
-    void codeCursorChangedAction();
 
-    /**
-     * @brief runAutomaticAction
-     */
-    void runAutomaticAction();
+    void openButtonAction();            // Datei Öffnen Dialog
+    void saveButtonAction();            // Datei Speichern Dialog
+
+    void codeChangedAction();           // Änderungen am Steuercode
+    void codeCursorChangedAction();     // Cursoränderung im Code Editor (für Zeilenhervorhebung)
+
+    void runAutomaticAction();          // Befehle ausführen
+    void stopAutomaticAction();         // Befehlsausführung stoppen
+
+    void stepDelaySpinnerAction();      // Befehlsverzögerung
+    void drawDelaySpinnerAction();      // Zeichenverzögerung
+
+    void gridSizeSpinnerAction();       // Grid Abstand
 
 private:
-    LCSSyntaxHighlighter * _syntaxHighlighter;  /**< Syntaxerkennung    */
+    LCSSyntaxHighlighter * _syntaxHighlighter;  /**< Syntaxerkennung        */
 
-    int                    _drawAnimationTime;  /**< Animationszeit     */
-    LCSGridGraphicScene  * _graphicsScene;      /**< GraphicScene       */
+    double                 _drawAnimationTime;  /**< Animationszeit Draw    */
+    double                 _stepAnimationTime;  /**< Animationszeit Steps   */
+    LCSGridGraphicScene  * _graphicsScene;      /**< GraphicScene           */
 
-    LCSLaser               _laser;              /**< Laser Controller   */
+    LCSLaser               _laser;              /**< Laser Controller       */
+
+    bool                   _proceedExec;        /**< Ausführungsindikator   */
 };
 
 #endif // MAINWINDOW_H
