@@ -189,6 +189,9 @@ void MainWindow::laserUpdate() {
         }
     }
 
+    ui->laserPosXLabel->setText(QString::number(this->_laser.actualPosition().x));
+    ui->laserPosYLabel->setText(QString::number(this->_laser.actualPosition().y));
+
     // Kurz Warten da sonst einige Aktualisierungen nicht sichtbar sind
     delay(this->_drawAnimationTime / 4.0);
 }
