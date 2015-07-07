@@ -1,5 +1,5 @@
 //
-// Created by Matthias Röll on 20.05.15.
+// Created by Matthias Röll, Marc Wüst
 //
 // Code Example from http://doc.qt.io/qt-4.8/qt-richtext-syntaxhighlighter-example.html
 

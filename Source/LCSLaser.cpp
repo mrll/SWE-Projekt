@@ -1,3 +1,7 @@
+//
+// Created by Matthias Röll, Marc Wüst
+//
+
 #include "LCSLaser.h"
 
 #include "LCSEngineState.h"

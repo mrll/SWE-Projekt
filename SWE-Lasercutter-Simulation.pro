@@ -43,3 +43,5 @@ HEADERS     +=  Source/LCSEngineState.h \
                 Source/MainWindow.h
 
 FORMS       +=  Source/MainWindow.ui
+
+ICON        = LaserCutter.icns

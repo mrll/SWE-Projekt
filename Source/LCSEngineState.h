@@ -1,3 +1,7 @@
+//
+// Created by Matthias Röll, Marc Wüst
+//
+
 #ifndef LCSENGINESTATE_H
 #define LCSENGINESTATE_H
 

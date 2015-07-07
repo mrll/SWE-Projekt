@@ -1,5 +1,5 @@
 //
-// Created by Matthias Röll on 20.05.15.
+// Created by Matthias Röll, Marc Wüst
 //
 // Original aus dem Tutorial von: http://tufangorel.blogspot.de/2011/08/draw-grid-on-qgraphicsscene.html
 

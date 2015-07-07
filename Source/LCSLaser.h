@@ -1,3 +1,7 @@
+//
+// Created by Matthias Röll, Marc Wüst
+//
+
 #ifndef LCSLASER_H
 #define LCSLASER_H
 
@@ -53,13 +57,13 @@ public:
     /**
      * @brief laserUpdate
      *
-     * Wird gesendet sobeld sich Werte des Lasers ändern.
+     * Wird gesendet sobald sich Werte des Lasers ändern.
      */
     virtual void laserUpdate() = 0;
     /**
      * @brief proceedExecution
      *
-     * Zeigt an ab die Ausführung der Befehle weiterlaufen soll.
+     * Zeigt an ob die Ausführung der Befehle weiterlaufen soll.
      *
      * @return Betriebsindikator
      */

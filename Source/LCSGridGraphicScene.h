@@ -1,5 +1,5 @@
 //
-// Created by Matthias Röll on 20.05.15.
+// Created by Matthias Röll, Marc Wüst
 //
 // Original aus dem Tutorial von: http://tufangorel.blogspot.de/2011/08/draw-grid-on-qgraphicsscene.html
 
@@ -12,6 +12,15 @@
 /* Abgeleitete QGraphicScene inkl. Grid                                                                             */
 /* ---------------------------------------------------------------------------------------------------------------- */
 
+/**
+ * @brief Grid Graphic View
+ *
+ * Die Klasse zeichnet ein Karomuster im Hintergrund der GraphicView.
+ *
+ * Die Klasse stammt ursprünglich aus dem Blogeintrag:
+ *  http://tufangorel.blogspot.de/2011/08/draw-grid-on-qgraphicsscene.html
+ * wurde aber um die Möglichkeit erweitert, die Karogröße einzustellen.
+ */
 class LCSGridGraphicScene : public QGraphicsScene {
 public:
     LCSGridGraphicScene(QObject *parent);

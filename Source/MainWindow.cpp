@@ -1,3 +1,7 @@
+//
+// Created by Matthias Röll, Marc Wüst
+//
+
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 

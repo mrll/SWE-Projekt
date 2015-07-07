@@ -1,5 +1,5 @@
 //
-// Created by Matthias Röll on 20.05.15.
+// Created by Matthias Röll, Marc Wüst
 //
 // Code Example from http://doc.qt.io/qt-4.8/qt-richtext-syntaxhighlighter-example.html
 
@@ -13,6 +13,12 @@
 
 class QTextDocument;
 
+/**
+ * @brief Syntax Highlighter für den Code Editor
+ *
+ * Die Klasse basiert auf dem QT-Beispielcode von:
+ * http://doc.qt.io/qt-4.8/qt-richtext-syntaxhighlighter-example.html
+ */
 class LCSSyntaxHighlighter : public QSyntaxHighlighter
 {
     Q_OBJECT
