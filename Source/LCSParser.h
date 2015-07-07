@@ -1,3 +1,7 @@
+//
+// Created by Matthias Röll, Marc Wüst
+//
+
 #ifndef LCSPARSER_H
 #define LCSPARSER_H
 
@@ -15,8 +19,8 @@
 typedef enum {
     LCSErrNone = 0,             /**< Kein Fehler (Platzhalter bei Initialisierung)  */
     LCSErrSyntax = 1,           /**< Syntaxfehler (Allgemein)                       */
-    LCSErrMoveSyntax = 2,       /**< Syntaxfehler (Move)                            */
-    LCSErrPowerSyntax = 3       /**< Syntaxfehler (Power)                           */
+    LCSErrMoveSyntax = 2,       /**< Syntaxfehler (Move)   Wurde mit QRegEx benutzt */
+    LCSErrPowerSyntax = 3       /**< Syntaxfehler (Power)  Wurde mit QRegEx benutzt */
 } LCSErrorCode;
 
 /**

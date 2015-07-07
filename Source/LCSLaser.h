@@ -1,3 +1,7 @@
+//
+// Created by Matthias Röll, Marc Wüst
+//
+
 #ifndef LCSLASER_H
 #define LCSLASER_H
 
@@ -33,7 +37,10 @@ LCSPoint newPoint(int x, int y);
 /* ---------------------------------------------------------------------------------------------------------------- */
 
 /**
- * Abstrakte Klasse um Methoden eines View Controllers vorzugeben
+ * @brief Abstrakte Klasse um Methoden eines View Controllers vorzugeben
+ *
+ * Die Methoden werden von der Laserklasse in der Methode runInstructions benötigt, sofern
+ * eine graphische Ausgabe erfolgen soll.
  */
 class LCSSimulationInterface
 {
@@ -50,13 +57,13 @@ public:
     /**
      * @brief laserUpdate
      *
-     * Wird gesendet sobeld sich Werte des Lasers ändern.
+     * Wird gesendet sobald sich Werte des Lasers ändern.
      */
     virtual void laserUpdate() = 0;
     /**
      * @brief proceedExecution
      *
-     * Zeigt an ab die Ausführung der Befehle weiterlaufen soll.
+     * Zeigt an ob die Ausführung der Befehle weiterlaufen soll.
      *
      * @return Betriebsindikator
      */
@@ -94,111 +101,61 @@ private:
     LCSParserCommand                _currentCommand;    /**< Aktueller Befehl   */
     LCSPoint                        _codeGridSize;      /**< Größe in Punkten   */
 public:
-    /**
-     * @brief LCSLaser Konstruktor
-     */
     LCSLaser();
 
-    /**
-     * @brief setEngineState
-     * @param state
-     */
+    // Engine-State Setter und Bewegungsindikator
     void setEngineState(LCSEngineState * state);
-    /**
-     * @brief isMoving
-     * @return
-     */
     bool isMoving();
 
-    /**
-     * @brief move
-     * @param destination
-     */
+    // Engine-State Methoden
     void move(LCSPoint destination);
-    /**
-     * @brief halt
-     */
     void halt();
 
-    /**
-     * @brief setLaserState
-     * @param state
-     */
+    // Laser-State Setter und Zustandsindikator
     void setLaserState(LCSLaserState * state);
-    /**
-     * @brief isLaserOn
-     * @return
-     */
     bool isLaserOn();
 
-    /**
-     * @brief on
-     */
+    // Laser-State Methoden
     void on();
-    /**
-     * @brief off
-     */
     void off();
 
-    /**
-     * @brief actualPosition
-     * @return
-     */
+    // Setter Getter Positionen
     LCSPoint actualPosition();
-    /**
-     * @brief setActualPosition
-     * @param position
-     */
     void setActualPosition(LCSPoint position);
     void setActualPosition(double x, double y);
 
-    /**
-     * @brief desiredPosition
-     * @return
-     */
     LCSPoint desiredPosition();
-    /**
-     * @brief setDesiredPosition
-     * @param destination
-     */
     void setDesiredPosition(LCSPoint destination);
     void setDesiredPosition(double x, double y);
 
     /**
      * @brief parseInstructionCode
-     * @param code
-     * @return
+     *
+     * Gibt den Code an den Parser weiter und aktualisiert die
+     * internen Variablen zum Speichern der Befehle, Fehler usw...
+     *
+     * @param code Code zum Übersetzen
+     *
+     * @return Fehler vorhanden
      */
     bool parseInstructionCode(std::string code);
 
-    /**
-     * @brief commands
-     * @return
-     */
+    // Getter Parserinstruktionen
     std::vector<LCSParserCommand> commands();
-    /**
-     * @brief errors
-     * @return
-     */
     std::vector<LCSParserError> errors();
 
     /**
      * @brief runInstructions
-     * @param relative
-     * @param interface
-     * @return
+     *
+     * @param relative  Verarbeitet die Befehlswerte relativ wenn true
+     * @param interface View Controller Klasse (Akzeptiert nullptr)
+     *
+     * @return false falls Fehler vorhanden sind
      */
     bool runInstructions(bool relative, LCSSimulationInterface * interface);
 
-    /**
-     * @brief codeGridSize
-     * @return
-     */
+    // Sonstige Getter
     LCSPoint codeGridSize();
-    /**
-     * @brief currentCommand
-     * @return
-     */
     LCSParserCommand currentCommand();
 protected:
 

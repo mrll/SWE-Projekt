@@ -1,3 +1,7 @@
+//
+// Created by Matthias Röll, Marc Wüst
+//
+
 #include "LCSLaser.h"
 
 #include "LCSEngineState.h"
@@ -31,14 +35,14 @@ LCSPoint newPoint(int x, int y) {
 
 LCSLaser::LCSLaser() {
     // Defaultwerte setzen
-    this->_engineState = new HALT(this);
-    this->_laserState  = new OFF();
+    _engineState = new HALT(this);
+    _laserState  = new OFF();
 
-    this->_actualPosition  = zeroPoint();
-    this->_desiredPosition = zeroPoint();
+    _actualPosition  = zeroPoint();
+    _desiredPosition = zeroPoint();
 
-    this->_codeGridSize    = zeroPoint();
-    this->_currentCommand  = LCSParserCommand();
+    _codeGridSize    = zeroPoint();
+    _currentCommand  = LCSParserCommand();
 
     _commands.clear();
     _errors.clear();
@@ -49,17 +53,17 @@ LCSLaser::LCSLaser() {
 /* ======================= */
 
 void LCSLaser::setEngineState(LCSEngineState * state) {
-    this->_engineState = state;
+    _engineState = state;
 }
 bool LCSLaser::isMoving() {
-    return this->_engineState->moving();
+    return _engineState->moving();
 }
 
 void LCSLaser::move(LCSPoint destination) {
-    this->_engineState->move(this, destination);
+    _engineState->move(this, destination);
 }
 void LCSLaser::halt() {
-    this->_engineState->halt(this);
+    _engineState->halt(this);
 }
 
 /* ======================= */
@@ -67,17 +71,17 @@ void LCSLaser::halt() {
 /* ======================= */
 
 void LCSLaser::setLaserState(LCSLaserState * state) {
-    this->_laserState = state;
+    _laserState = state;
 }
 bool LCSLaser::isLaserOn() {
-    return this->_laserState->isOn();
+    return _laserState->isOn();
 }
 
 void LCSLaser::on() {
-    this->_laserState->on(this);
+    _laserState->on(this);
 }
 void LCSLaser::off() {
-    this->_laserState->off(this);
+    _laserState->off(this);
 }
 
 /* ======================= */
@@ -85,16 +89,16 @@ void LCSLaser::off() {
 /* ======================= */
 
 void LCSLaser::setActualPosition(LCSPoint position) {
-    this->_actualPosition = position;
+    _actualPosition = position;
 }
 
 void LCSLaser::setActualPosition(double x, double y) {
-    this->_actualPosition.x = x;
-    this->_actualPosition.y = y;
+    _actualPosition.x = x;
+    _actualPosition.y = y;
 }
 
 LCSPoint LCSLaser::actualPosition() {
-    return this->_actualPosition;
+    return _actualPosition;
 }
 
 /* ======================= */
@@ -102,16 +106,16 @@ LCSPoint LCSLaser::actualPosition() {
 /* ======================= */
 
 void LCSLaser::setDesiredPosition(LCSPoint position) {
-    this->_desiredPosition = position;
+    _desiredPosition = position;
 }
 
 void LCSLaser::setDesiredPosition(double x, double y) {
-    this->_desiredPosition.x = x;
-    this->_desiredPosition.y = y;
+    _desiredPosition.x = x;
+    _desiredPosition.y = y;
 }
 
 LCSPoint LCSLaser::desiredPosition() {
-    return this->_desiredPosition;
+    return _desiredPosition;
 }
 
 /* ======================= */
@@ -120,15 +124,16 @@ LCSPoint LCSLaser::desiredPosition() {
 
 bool LCSLaser::parseInstructionCode(std::string code) {
     // Löschen alter Befehle und Fehler
-    this->_errors.clear();
-    this->_commands.clear();
+    _errors.clear();
+    _commands.clear();
 
     // Code Parsen
-    this->_parser.parse(code, &(this->_commands), &(this->_errors));
+    _parser.parse(code, &_commands, &_errors);
 
     // Auslesen der Größe des zu zeichnenden Bildes
     int minX = 0, maxX = 0, minY = 0, maxY = 0;
-    for (LCSParserCommand command : this->_commands) {
+
+    for (LCSParserCommand command : _commands) {
         if (command.command == LCSCmdEngine) {
             if (command.parameter[0] < minX) {
                 minX = command.parameter[0];
@@ -144,27 +149,27 @@ bool LCSLaser::parseInstructionCode(std::string code) {
             }
         }
     }
-    this->_codeGridSize.x = (maxX - minX);
-    this->_codeGridSize.y = (maxY - minY);
+    _codeGridSize.x = (maxX - minX);
+    _codeGridSize.y = (maxY - minY);
 
     // Ok wenn keine Fehler
-    return this->_errors.size() == 0;
+    return _errors.size() == 0;
 }
 
 std::vector<LCSParserCommand> LCSLaser::commands() {
-    return this->_commands;
+    return _commands;
 }
 
 std::vector<LCSParserError> LCSLaser::errors() {
-    return this->_errors;
+    return _errors;
 }
 
 LCSPoint LCSLaser::codeGridSize() {
-    return this->_codeGridSize;
+    return _codeGridSize;
 }
 
 LCSParserCommand LCSLaser::currentCommand() {
-    return this->_currentCommand;
+    return _currentCommand;
 }
 
 /* ======================= */
@@ -173,68 +178,84 @@ LCSParserCommand LCSLaser::currentCommand() {
 
 bool LCSLaser::runInstructions(bool relative, LCSSimulationInterface * interface) {
     // Ausführung bei Fehlern verhindern
-    if (this->_errors.size() > 0) {
+    if (_errors.size() > 0) {
         return false;
     } else {
         // Positionen des Lasers zurücksetzen
-        this->_actualPosition = zeroPoint();
-        this->_desiredPosition = zeroPoint();
-        interface->laserUpdate();
+        _actualPosition = zeroPoint();
+        _desiredPosition = zeroPoint();
+
+        if (interface != nullptr) {
+            interface->laserUpdate();
+        }
 
         // Durch Befehle iterieren und ausführen
-        for (LCSParserCommand command : this->_commands) {
-            this->_currentCommand = command;
+        for (LCSParserCommand command : _commands) {
+            // Aktuellen Befehl setzen
+            _currentCommand = command;
+
             switch (command.command) {
-                case LCSCmdEngine: {
+                case LCSCmdEngine: {                    // MOVE Verarbeitung
                     LCSPoint p;
+
                     if (relative) {
                         // Relative Werte berechnen
-                        p = newPoint(this->_actualPosition.x + command.parameter[0],
-                                     this->_actualPosition.y + command.parameter[1]);
+                        p = newPoint(_actualPosition.x + command.parameter[0],
+                                     _actualPosition.y + command.parameter[1]);
                     } else {
                         // Absolute Werte nur setzen
                         p = newPoint(command.parameter[0], command.parameter[1]);
                     }
-                    this->move(p);
-                    interface->laserUpdate();
-                    if (interface != nullptr && this->isLaserOn()) {
-                        // Wenn eine View gegeben und der Laser an ist ist zeichnen
-                        interface->drawLine(this->_actualPosition, p);
+
+                    // Hardware fahren
+                    move(p);
+                    // Simulation fahren
+                    if (interface != nullptr) {
+                        interface->laserUpdate();
+                        if (isLaserOn()) {
+                            // Wenn eine View gegeben und der Laser an ist ist zeichnen
+                            interface->drawLine(_actualPosition, p);
+                        }
                     }
-                    this->halt();
+
+                    halt();
                     break;
                 }
-                case LCSCmdLaser: {
+                case LCSCmdLaser: {                     // LASER Verarbeitung
                     // Laser an/aus schalten
                     if (command.parameter[0] == 0) {
-                        this->halt();
-                        this->off();
+                        halt();
+                        off();
                     } else {
-                        this->halt();
-                        this->on();
+                        halt();
+                        on();
                     }
                     break;
                 }
-                default: {
+                default: {                              // UNKNOWN Verarbeitung
+
                     std::cout << "Unbekannter Befehl! Bitte die Funktion: " << std::endl;
                     std::cout << "\t'bool LCSLaser::runInstructions(...)'" << std::endl;
                     std::cout << "in einer Subklasse überschreiben, um neue Befehle zu verarbeiten." << std::endl;
+
                     break;
                 }
             }
+
+            // Update event senden, da Werte geändert wurden
             if (interface != nullptr) {
-                // Update event senden, da Werte geändert wurden
                 interface->laserUpdate();
                 // Auf weitere Ausführung testen
                 if (!interface->proceedExecution()) {
-                    this->off();
+                    off();
                     break;
                 }
             }
         }
 
-        this->halt();
-        this->_currentCommand = LCSParserCommand();
+        halt();
+
+        _currentCommand = LCSParserCommand();
         if (interface != nullptr) {
             // Update event senden, da Werte geändert wurden
             interface->laserUpdate();

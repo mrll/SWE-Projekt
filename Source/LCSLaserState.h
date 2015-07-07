@@ -1,3 +1,7 @@
+//
+// Created by Matthias Röll, Marc Wüst
+//
+
 #ifndef LCSLASERSTATE_H
 #define LCSLASERSTATE_H
 

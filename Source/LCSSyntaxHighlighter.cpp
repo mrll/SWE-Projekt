@@ -1,11 +1,19 @@
 //
-// Created by Matthias Röll on 20.05.15.
+// Created by Matthias Röll, Marc Wüst
 //
 // Code Example from http://doc.qt.io/qt-4.8/qt-richtext-syntaxhighlighter-example.html
 
 #include "LCSSyntaxHighlighter.h"
 
 #include <QtGui>
+
+/* ---------------------------------------------------------------------------------------------------------------- */
+/* Syntax highlighter                                                                                               */
+/* ---------------------------------------------------------------------------------------------------------------- */
+
+/* ======================= */
+/* Konstruktor             */
+/* ======================= */
 
 LCSSyntaxHighlighter::LCSSyntaxHighlighter(QTextDocument *parent) : QSyntaxHighlighter(parent) {
     HighlightingRule rule;
@@ -42,6 +50,10 @@ LCSSyntaxHighlighter::LCSSyntaxHighlighter(QTextDocument *parent) : QSyntaxHighl
     rule.format = commentFormat;
     highlightingRules.append(rule);
 }
+
+/* ======================= */
+/* Highlighter             */
+/* ======================= */
 
 void LCSSyntaxHighlighter::highlightBlock(const QString &text) {
     foreach (const HighlightingRule &rule, highlightingRules) {

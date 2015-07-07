@@ -13,8 +13,8 @@ TEMPLATE    = app
 
 CONFIG      += c++11
 
-# Auskommentieren um Debugkonsole zu unterdrücken
-CONFIG      += console
+# Auskommentieren um Debugkonsole zu de-/aktivieren
+# CONFIG      += console
 
 # Unter Mac OS muss die libc++ mit eingebunden werden um <regex> zu benutzen
 # Wichtig: clang benutzen / nicht g++
@@ -43,3 +43,5 @@ HEADERS     +=  Source/LCSEngineState.h \
                 Source/MainWindow.h
 
 FORMS       +=  Source/MainWindow.ui
+
+ICON        = LaserCutter.icns

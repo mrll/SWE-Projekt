@@ -1,3 +1,7 @@
+//
+// Created by Matthias Röll, Marc Wüst
+//
+
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
@@ -16,6 +20,12 @@ class MainWindow;
 /* Main Window UI Controller Klasse                                                                                 */
 /* ---------------------------------------------------------------------------------------------------------------- */
 
+/**
+ * @brief User Interface Controller (View Controller)
+ *
+ * Die MainWindow Klasse stellt die Schnittstelle zwischen dem User Interface und dem LCSLaser (Hardware-Controller)
+ * her. Es werden die Events der Klasse Ui::MainWindow verarbeitet und auf Änderungen des LCSLaser eingegangen.
+ */
 class MainWindow : public QMainWindow, LCSSimulationInterface
 {
     Q_OBJECT
@@ -25,15 +35,15 @@ public:
     ~MainWindow();
 
 private:
-    Ui::MainWindow * ui;
+    Ui::MainWindow * ui;    /**< User Interface (View) */
 
 public:
 
     // Siehe LCSSimulationInterface in LCLaser.h
-    void drawLine(LCSPoint from, LCSPoint to);
-    void laserUpdate();
-    bool proceedExecution();
-    void finishedExecution();
+    void drawLine(LCSPoint from, LCSPoint to);      // Linie Zeichnen
+    void laserUpdate();                             // Änderungen des Lasers verarbeiten
+    bool proceedExecution();                        // Ausführungsindikator
+    void finishedExecution();                       // Benachrichtigung über Ende der Befehlsausführung
 
     /**
      *  Setter & Getter für die Zeichenverzögerung
