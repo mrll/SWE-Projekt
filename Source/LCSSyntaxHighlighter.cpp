@@ -7,6 +7,14 @@
 
 #include <QtGui>
 
+/* ---------------------------------------------------------------------------------------------------------------- */
+/* Syntax highlighter                                                                                               */
+/* ---------------------------------------------------------------------------------------------------------------- */
+
+/* ======================= */
+/* Konstruktor             */
+/* ======================= */
+
 LCSSyntaxHighlighter::LCSSyntaxHighlighter(QTextDocument *parent) : QSyntaxHighlighter(parent) {
     HighlightingRule rule;
 
@@ -42,6 +50,10 @@ LCSSyntaxHighlighter::LCSSyntaxHighlighter(QTextDocument *parent) : QSyntaxHighl
     rule.format = commentFormat;
     highlightingRules.append(rule);
 }
+
+/* ======================= */
+/* Highlighter             */
+/* ======================= */
 
 void LCSSyntaxHighlighter::highlightBlock(const QString &text) {
     foreach (const HighlightingRule &rule, highlightingRules) {

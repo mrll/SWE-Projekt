@@ -13,9 +13,21 @@ inline qreal round(qreal val, int step) {
     return qreal(tmp);
 }
 
+/* ---------------------------------------------------------------------------------------------------------------- */
+/* Grid Graphic Scene                                                                                               */
+/* ---------------------------------------------------------------------------------------------------------------- */
+
+/* ======================= */
+/* Konstruktor             */
+/* ======================= */
+
 LCSGridGraphicScene::LCSGridGraphicScene(QObject *parent ) : QGraphicsScene(parent) {
     _gridStep = 25;
 }
+
+/* ======================= */
+/* Hintergrund Drawing     */
+/* ======================= */
 
 void LCSGridGraphicScene::drawBackground(QPainter *painter, const QRectF &rect)
 {
@@ -41,6 +53,10 @@ void LCSGridGraphicScene::drawBackground(QPainter *painter, const QRectF &rect)
         painter->drawLine((int)x, (int)rect.top(), (int)x, (int)rect.bottom());
     }
 }
+
+/* ======================= */
+/* Grid Size               */
+/* ======================= */
 
 int LCSGridGraphicScene::getGridStep() {
     return _gridStep;

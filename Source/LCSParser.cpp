@@ -31,10 +31,10 @@ LCSParserError::LCSParserError(std::string code, std::string msg, int line, LCSE
 }
 
 LCSParserError::LCSParserError() {
-    this->code  = "";
-    this->msg   = "";
-    this->line  = -1;
-    this->error = LCSErrNone;
+    code  = "";
+    msg   = "";
+    line  = -1;
+    error = LCSErrNone;
 }
 
 /* ---------------------------------------------------------------------------------------------------------------- */
@@ -53,10 +53,10 @@ LCSParserCommand::LCSParserCommand(LCSCommandCode command, int * parameter, int 
 }
 
 LCSParserCommand::LCSParserCommand() {
-    this->command           = LCSCmdUnknown;
-    this->parameter         = (int *) malloc(sizeof(int) * 2);  // Größe für MOVE Befehl
-    this->parameterCount    = 2;
-    this->line              = -1;
+    command           = LCSCmdUnknown;
+    parameter         = (int *) malloc(sizeof(int) * 2);  // Größe für MOVE Befehl
+    parameterCount    = 2;
+    line              = -1;
 }
 
 /* ---------------------------------------------------------------------------------------------------------------- */
@@ -68,10 +68,10 @@ LCSParserCommand::LCSParserCommand() {
 /* ======================= */
 
 LCSParser::LCSParser() {
-    this->validators = new std::vector<validatorFunction>();
+    validators = new std::vector<validatorFunction>();
 
-    this->validators->push_back(LCSParser::moveExpValidator);
-    this->validators->push_back(LCSParser::powerExpValidator);
+    validators->push_back(LCSParser::moveExpValidator);
+    validators->push_back(LCSParser::powerExpValidator);
 
     // Weitere Validatoren können in erbenden Klassen hinzugefügt werden.
 }
@@ -98,7 +98,7 @@ bool LCSParser::parse(std::string code, std::vector<LCSParserCommand> * commands
             LCSParserCommand command;
 
             // Validatoren testen und Befehl speichern
-            for (const validatorFunction validator : *(this->validators)) {
+            for (const validatorFunction validator : *(validators)) {
                 if (validator(tempString, &command)) {
                     command.line = lineCounter;
                     commands->push_back(command);

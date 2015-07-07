@@ -74,8 +74,10 @@ MainWindow::~MainWindow() {
 /* ======================= */
 
 void MainWindow::openButtonAction() {
+    // Open Dialog erstellen und ausführen
     QString fn = QFileDialog::getOpenFileName(this, tr("Datei oeffnen..."),
                                               QString(), tr("Text Dateien (*.txt);;Alle Dateien (*)"));
+    // Datei laden
     if (!fn.isEmpty()) {
         QFile textFile(fn);
         textFile.open(QFile::ReadOnly | QFile::Text);
@@ -85,15 +87,17 @@ void MainWindow::openButtonAction() {
 }
 
 void MainWindow::saveButtonAction() {
+    // SaveDialog erstellen und ausführen
     QString fn = QFileDialog::getSaveFileName(this, tr("Speichern unter..."),
                                               QString(), tr("Text Datei (*.txt)"));
-
+    // Dateisuffix anhängen
     if (!fn.isEmpty()) {
         if (!fn.endsWith(".txt", Qt::CaseInsensitive)) {
             fn += ".txt"; // default
         }
     }
 
+    // Datei schreiben
     QTextDocumentWriter writer(fn);
     bool success = writer.write(ui->codeEdit->document());
     if (success) {
@@ -107,12 +111,12 @@ void MainWindow::saveButtonAction() {
 
 void MainWindow::codeChangedAction() {
     // Code parsen
-    bool success = this->_laser.parseInstructionCode(ui->codeEdit->document()->toPlainText().toStdString());
+    bool success = _laser.parseInstructionCode(ui->codeEdit->document()->toPlainText().toStdString());
 
-    // Log String
+    // Log String erstellen (für Fehlermeldungsfenster)
     QString logString;
-    std::vector<LCSParserCommand> commands = this->_laser.commands();
-    std::vector<LCSParserError>   errors   = this->_laser.errors();
+    std::vector<LCSParserCommand> commands = _laser.commands();
+    std::vector<LCSParserError>   errors   = _laser.errors();
 
     logString =  "Befehle: " + QString::number(commands.size()) + "\n";
     logString += "Fehler: "  + QString::number(errors.size()) + "\n";
@@ -138,13 +142,14 @@ void MainWindow::codeChangedAction() {
         ui->codeLogLabel->setText("Code nicht OK!");
     }
 
+    // Sonstige UI Werte setzen
     ui->cmdCountLabel->setText(QString::number(commands.size()));
     ui->codeLog->document()->setPlainText(logString);
 
-    LCSPoint codeSize = this->_laser.codeGridSize();
+    LCSPoint codeSize = _laser.codeGridSize();
     ui->codeSizeLabel->setText(QString::number(codeSize.x) + " x " + QString::number(codeSize.y));
 
-    this->laserUpdate();
+    laserUpdate();
 }
 
 void MainWindow::codeCursorChangedAction() {
@@ -164,16 +169,20 @@ void MainWindow::codeCursorChangedAction() {
 /* ======================= */
 
 void MainWindow::runAutomaticAction() {
-    // Grid löschen und Laser starten
+    // Grid löschen
     _graphicsScene->clear();
-    this->_proceedExec = true;
+    _proceedExec = true;
+    // UI Buttons de-/aktivieren
     ui->stopCodeButton->setEnabled(true);
     ui->runCodeButton->setEnabled(false);
-    this->_laser.runInstructions(ui->relativeRadioButton->isChecked(), this);
+    // Ausführung starten
+    _laser.runInstructions(ui->relativeRadioButton->isChecked(), this);
 }
 
 void MainWindow::stopAutomaticAction() {
-    this->_proceedExec = false;
+    // Abbruchvariable setzen
+    _proceedExec = false;
+    // UI Buttons de-/aktivieren
     ui->runCodeButton->setEnabled(true);
     ui->stopCodeButton->setEnabled(false);
 }
@@ -204,19 +213,24 @@ void MainWindow::gridSizeSpinnerAction() {
 /* ======================= */
 
 void MainWindow::drawLine(LCSPoint from, LCSPoint to) {
+    // Schwarzer 'Stift' (static da immer wieder benutzt)
     static QPen pen(QBrush(Qt::black, Qt::SolidPattern), 4, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
+    // Startpunkt erstellen
     QPoint stepPoint = QPoint(from.x, from.y);
+    // Schritte für die Animation erstellen
     double xStep = (to.x - from.x) / 10.0;
     double yStep = (to.y - from.y) / 10.0;
 
-    // Linie Schrittweise malen (Animationszwecke)
+    // Linie Schrittweise malen (Animation)
     for (int i = 0; i < 9; ++i) {
         _graphicsScene->addLine(stepPoint.x(), stepPoint.y(), stepPoint.x() + xStep, stepPoint.y() + yStep, pen);
+        // Weitere Ausführung Verzögern
         delay(drawAnimationTime() / 10.0);
+        // Schritte addieren
         stepPoint.setX((int) (stepPoint.x() + xStep));
         stepPoint.setY((int) (stepPoint.y() + yStep));
-
+        // Laserpositionslabel aktualisieren
         ui->laserPosXLabel->setText(QString::number(stepPoint.x()));
         ui->laserPosYLabel->setText(QString::number(stepPoint.y()));
     }
@@ -229,26 +243,28 @@ void MainWindow::drawLine(LCSPoint from, LCSPoint to) {
 }
 
 void MainWindow::laserUpdate() {
-    if (this->_laser.isLaserOn()) {
+    // Laserstatus aktualisieren
+    if (_laser.isLaserOn()) {
         ui->laserOnStateLabel->setText("AN");
     } else {
         ui->laserOnStateLabel->setText("AUS");
     }
-
-    if (this->_laser.isMoving()) {
+    // Motorstatus aktualisieren
+    if (_laser.isMoving()) {
         ui->laserMoveStateLabel->setText("MOVE");
     } else {
         ui->laserMoveStateLabel->setText("HALT");
     }
 
-    LCSParserCommand cmd = this->_laser.currentCommand();
+    // Aktuellen Befehl aktualisieren
+    LCSParserCommand cmd = _laser.currentCommand();
     // Kein Befehl
     if (cmd.command == LCSCmdUnknown) {
         ui->commandLineLabel->setText("");
         ui->commandLabel->setText("NONE");
     } else {
         // Zeilennummer
-        ui->commandLineLabel->setText("Line " + QString::number(cmd.line) + ":");
+        ui->commandLineLabel->setText("Zeile: " + QString::number(cmd.line));
         // Move Befehl
         if (cmd.command == LCSCmdEngine) {
             ui->commandLabel->setText("MOVE " + QString::number(cmd.parameter[0]) + ", " + QString::number(cmd.parameter[1]));
@@ -265,11 +281,13 @@ void MainWindow::laserUpdate() {
         }
     }
 
-    ui->laserPosXLabel->setText(QString::number(this->_laser.actualPosition().x));
-    ui->laserPosYLabel->setText(QString::number(this->_laser.actualPosition().y));
+    // Laserposition aktualisieren
+    ui->laserPosXLabel->setText(QString::number(_laser.actualPosition().x));
+    ui->laserPosYLabel->setText(QString::number(_laser.actualPosition().y));
 
-    // Kurz Warten da sonst einige Aktualisierungen nicht sichtbar sind
-    delay(this->_stepAnimationTime);
+    // Kurz Warten da sonst einige Aktualisierungen wärend der Ausführung
+    // zu schnell wieder verschwinden
+    delay(_stepAnimationTime);
 }
 
 bool MainWindow::proceedExecution() {
