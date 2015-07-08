@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file alias="engine-off">Assets/EngineOFF.png</file>
+        <file alias="engine-on">Assets/EngineON.png</file>
+        <file alias="laser-off">Assets/LaserOFF.png</file>
+        <file alias="laser-on">Assets/LaserON.png</file>
+    </qresource>
+</RCC>

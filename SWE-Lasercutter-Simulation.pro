@@ -45,3 +45,6 @@ HEADERS     +=  Source/LCSEngineState.h \
 FORMS       +=  Source/MainWindow.ui
 
 ICON        = LaserCutter.icns
+
+RESOURCES += \
+    assets.qrc

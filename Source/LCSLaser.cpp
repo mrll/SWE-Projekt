@@ -41,8 +41,8 @@ LCSLaser::LCSLaser() {
     _actualPosition  = zeroPoint();
     _desiredPosition = zeroPoint();
 
-    _codeGridSize    = zeroPoint();
-    _currentCommand  = LCSParserCommand();
+    _codeGridSize           = zeroPoint();
+    _currentCommandIndex    = -1;
 
     _commands.clear();
     _errors.clear();
@@ -169,7 +169,14 @@ LCSPoint LCSLaser::codeGridSize() {
 }
 
 LCSParserCommand LCSLaser::currentCommand() {
-    return _currentCommand;
+    if (_currentCommandIndex >= 0 && (size_t)_currentCommandIndex < _commands.size()) {
+        return _commands.at(_currentCommandIndex);
+    }
+    return LCSParserCommand();
+}
+
+int LCSLaser::currentCommandIndex() {
+    return _currentCommandIndex;
 }
 
 /* ======================= */
@@ -189,22 +196,22 @@ bool LCSLaser::runInstructions(bool relative, LCSSimulationInterface * interface
             interface->laserUpdate();
         }
 
-        // Durch Befehle iterieren und ausführen
-        for (LCSParserCommand command : _commands) {
-            // Aktuellen Befehl setzen
-            _currentCommand = command;
+        // Durch Befehle iterieren und ausführen (keine foreach da index gebraucht wird)
+        for (int i = 0; (size_t)i < _commands.size(); i++) {
+            // Aktuellen Befehlsindex setzen
+            _currentCommandIndex = i;
 
-            switch (command.command) {
+            switch (_commands[i].command) {
                 case LCSCmdEngine: {                    // MOVE Verarbeitung
                     LCSPoint p;
 
                     if (relative) {
                         // Relative Werte berechnen
-                        p = newPoint(_actualPosition.x + command.parameter[0],
-                                     _actualPosition.y + command.parameter[1]);
+                        p = newPoint(_actualPosition.x + _commands[i].parameter[0],
+                                     _actualPosition.y + _commands[i].parameter[1]);
                     } else {
                         // Absolute Werte nur setzen
-                        p = newPoint(command.parameter[0], command.parameter[1]);
+                        p = newPoint(_commands[i].parameter[0], _commands[i].parameter[1]);
                     }
 
                     // Hardware fahren
@@ -223,7 +230,7 @@ bool LCSLaser::runInstructions(bool relative, LCSSimulationInterface * interface
                 }
                 case LCSCmdLaser: {                     // LASER Verarbeitung
                     // Laser an/aus schalten
-                    if (command.parameter[0] == 0) {
+                    if (_commands[i].parameter[0] == 0) {
                         halt();
                         off();
                     } else {
@@ -255,7 +262,9 @@ bool LCSLaser::runInstructions(bool relative, LCSSimulationInterface * interface
 
         halt();
 
-        _currentCommand = LCSParserCommand();
+        // Befehlsindex zurücksetzen
+        _currentCommandIndex = -1;
+
         if (interface != nullptr) {
             // Update event senden, da Werte geändert wurden
             interface->laserUpdate();

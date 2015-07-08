@@ -88,18 +88,18 @@ public:
 class LCSLaser
 {
 private:
-    class LCSEngineState *          _engineState;       /**< Motorenzustand     */
-    class LCSLaserState  *          _laserState;        /**< Laserzustand       */
+    class LCSEngineState *          _engineState;           /**< Motorenzustand     */
+    class LCSLaserState  *          _laserState;            /**< Laserzustand       */
 
-    LCSPoint                        _actualPosition;    /**< Akt. Position      */
-    LCSPoint                        _desiredPosition;   /**< Neue Position      */
+    LCSPoint                        _actualPosition;        /**< Akt. Position      */
+    LCSPoint                        _desiredPosition;       /**< Neue Position      */
 
-    LCSParser                       _parser;            /**< Parser             */
-    std::vector<LCSParserCommand>   _commands;          /**< Befehle            */
-    std::vector<LCSParserError>     _errors;            /**< Code Fehler        */
+    LCSParser                       _parser;                /**< Parser             */
+    std::vector<LCSParserCommand>   _commands;              /**< Befehle            */
+    std::vector<LCSParserError>     _errors;                /**< Code Fehler        */
 
-    LCSParserCommand                _currentCommand;    /**< Aktueller Befehl   */
-    LCSPoint                        _codeGridSize;      /**< Größe in Punkten   */
+    int                             _currentCommandIndex;   /**< Befehlsnummer akt. */
+    LCSPoint                        _codeGridSize;          /**< Größe in Punkten   */
 public:
     LCSLaser();
 
@@ -157,6 +157,7 @@ public:
     // Sonstige Getter
     LCSPoint codeGridSize();
     LCSParserCommand currentCommand();
+    int currentCommandIndex();
 protected:
 
 };

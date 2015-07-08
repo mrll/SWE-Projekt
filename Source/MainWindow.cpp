@@ -63,6 +63,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->runCodeButton->setEnabled(true);
     ui->stopCodeButton->setEnabled(false);
 
+    // Images
+
+
     setDrawAnimationTime(2);
     setStepAnimationTime(0.5);
 
@@ -179,6 +182,9 @@ void MainWindow::runAutomaticAction() {
     // UI Buttons de-/aktivieren
     ui->stopCodeButton->setEnabled(true);
     ui->runCodeButton->setEnabled(false);
+    // Progressbar zurücksetzen
+    ui->progressBar->setValue(0);
+    ui->progressBar->setMaximum(_laser.commands().size());
     // Ausführung starten
     _laser.runInstructions(ui->relativeRadioButton->isChecked(), this);
 }
@@ -250,14 +256,22 @@ void MainWindow::laserUpdate() {
     // Laserstatus aktualisieren
     if (_laser.isLaserOn()) {
         ui->laserOnStateLabel->setText("AN");
+        QPixmap icon(":/icons/laser-on");             // Aus Ressourcen laden
+        ui->laserStateIcon->setPixmap(icon);
     } else {
         ui->laserOnStateLabel->setText("AUS");
+        QPixmap icon(":/icons/laser-off");
+        ui->laserStateIcon->setPixmap(icon);
     }
     // Motorstatus aktualisieren
     if (_laser.isMoving()) {
         ui->laserMoveStateLabel->setText("MOVE");
+        QPixmap icon(":/icons/engine-on");
+        ui->engineStateIcon->setPixmap(icon);
     } else {
         ui->laserMoveStateLabel->setText("HALT");
+        QPixmap icon(":/icons/engine-off");
+        ui->engineStateIcon->setPixmap(icon);
     }
 
     // Aktuellen Befehl aktualisieren
@@ -289,6 +303,9 @@ void MainWindow::laserUpdate() {
     ui->laserPosXLabel->setText(QString::number(_laser.actualPosition().x));
     ui->laserPosYLabel->setText(QString::number(_laser.actualPosition().y));
 
+    // Progressbar aktualisieren (+1 Nullbasiert)
+    ui->progressBar->setValue(_laser.currentCommandIndex() + 1);
+
     // Kurz Warten da sonst einige Aktualisierungen wärend der Ausführung
     // zu schnell wieder verschwinden
     delay(_stepAnimationTime);
@@ -301,6 +318,7 @@ bool MainWindow::proceedExecution() {
 void MainWindow::finishedExecution() {
     ui->runCodeButton->setEnabled(true);
     ui->stopCodeButton->setEnabled(false);
+    ui->progressBar->setValue(ui->progressBar->maximum());
 }
 
 /* ======================= */
